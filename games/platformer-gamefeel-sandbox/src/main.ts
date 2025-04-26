@@ -32,17 +32,30 @@ function preload(this: Phaser.Scene) {
 }
 
 function create(this: Phaser.Scene) {
-  // Create ground
-  const ground = this.add.rectangle(400, 580, 800, 40, 0x888888);
-  this.physics.add.existing(ground, true);
-
-  // Create player
+  // Create player first
   player = this.physics.add.sprite(400, 300, '');
   player.setDisplaySize(40, 60);
   player.setCollideWorldBounds(true);
 
-  // Add collision
+  // Create ground
+  const ground = this.add.rectangle(400, 580, 800, 40, 0x888888);
+  this.physics.add.existing(ground, true);
+
+  // Additional platforms
+  const platforms = [
+    this.add.rectangle(200, 450, 120, 20, 0x8888ff),
+    this.add.rectangle(600, 350, 120, 20, 0x88ff88),
+    this.add.rectangle(400, 250, 120, 20, 0xff8888),
+  ];
+  platforms.forEach(platform => {
+    this.physics.add.existing(platform, true);
+  });
+
+  // Add all colliders
   this.physics.add.collider(player, ground);
+  platforms.forEach(platform => {
+    this.physics.add.collider(player, platform);
+  });
 
   // Create cursors
   cursors = this.input.keyboard?.createCursorKeys() ?? {};
