@@ -33,11 +33,15 @@ let gravity = 1000;
 let jumpStrength = -500;
 let moveSpeed = 200;
 let coyoteTimeMs = 120; // milliseconds
+let jumpBufferTimeMs = 150; // milliseconds
+let jumpGravityMultiplier = 0.6; // Only applies while rising and jump is held
 
 // Coyote time state
 let coyoteTimer = 0;
 let wasOnGround = false;
 let prevJumpPressed = false;
+// Jump buffer state
+let jumpBufferTimer = 0;
 
 function preload(this: Phaser.Scene) {
   // Placeholder: use a simple rectangle for the player
@@ -88,11 +92,15 @@ function create(this: Phaser.Scene) {
     jumpStrength: () => jumpStrength,
     moveSpeed: () => moveSpeed,
     coyoteTimeMs: () => coyoteTimeMs,
+    jumpBufferTimeMs: () => jumpBufferTimeMs,
+    jumpGravityMultiplier: () => jumpGravityMultiplier,
   }, {
     setGravity: v => { gravity = v; },
     setJumpStrength: v => { jumpStrength = v; },
     setMoveSpeed: v => { moveSpeed = v; },
     setCoyoteTimeMs: v => { coyoteTimeMs = v; },
+    setJumpBufferTimeMs: v => { jumpBufferTimeMs = v; },
+    setJumpGravityMultiplier: v => { jumpGravityMultiplier = v; },
   });
 }
 
@@ -135,16 +143,37 @@ function update(this: Phaser.Scene, time: number, delta: number) {
     }
   }
 
-  // Jump logic with coyote time (edge detection)
+  // Jump buffering logic
+  if (jumpPressed && !prevJumpPressed) {
+    jumpBufferTimer = jumpBufferTimeMs;
+  } else if (jumpBufferTimer > 0) {
+    jumpBufferTimer -= delta;
+  }
+
+  // Jump logic with coyote time and jump buffer
   if (
-    jumpPressed &&
-    !prevJumpPressed && // just pressed
+    jumpBufferTimer > 0 &&
     coyoteTimer > 0 &&
     player.body
   ) {
     player.setVelocityY(jumpStrength);
     coyoteTimer = 0;
+    jumpBufferTimer = 0;
   }
+
+  // Gravity tweak: apply jump gravity multiplier only while rising and jump is held
+  if (player.body) {
+    const body = player.body as Phaser.Physics.Arcade.Body;
+    const rising = body.velocity.y < 0;
+    if (rising && prevJumpPressed) {
+      body.setAccelerationY(gravity * (jumpGravityMultiplier - 1));
+      this.physics.world.gravity.y = gravity * jumpGravityMultiplier;
+    } else {
+      body.setAccelerationY(0);
+      this.physics.world.gravity.y = gravity;
+    }
+  }
+
   prevJumpPressed = jumpPressed;
   wasOnGround = onGround;
 }
