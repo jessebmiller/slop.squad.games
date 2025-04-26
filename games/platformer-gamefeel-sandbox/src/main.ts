@@ -51,23 +51,36 @@ function preload(this: Phaser.Scene) {
 }
 
 function create(this: Phaser.Scene) {
-  // Create player first
-  player = this.physics.add.sprite(400, 300, '');
+  // Set world bounds larger than the camera view
+  const worldWidth = 2400;
+  const worldHeight = 1200;
+  this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
+  this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
+
+  // Create player near the left side
+  player = this.physics.add.sprite(100, worldHeight - 100, '');
   player.setDisplaySize(40, 60);
   player.setCollideWorldBounds(true);
 
   // Set initial gravity
   this.physics.world.gravity.y = gravity;
 
-  // Create ground
-  const ground = this.add.rectangle(400, 580, 800, 40, 0x888888);
+  // Create ground (spans the whole world)
+  const ground = this.add.rectangle(worldWidth / 2, worldHeight - 20, worldWidth, 40, 0x888888);
   this.physics.add.existing(ground, true);
 
-  // Additional platforms
+  // Additional platforms scattered throughout the level
   const platforms = [
-    this.add.rectangle(200, 450, 120, 20, 0x8888ff),
-    this.add.rectangle(600, 350, 120, 20, 0x88ff88),
-    this.add.rectangle(400, 250, 120, 20, 0xff8888),
+    this.add.rectangle(300, worldHeight - 200, 120, 20, 0x8888ff),
+    this.add.rectangle(600, worldHeight - 350, 120, 20, 0x88ff88),
+    this.add.rectangle(900, worldHeight - 500, 120, 20, 0xff8888),
+    this.add.rectangle(1200, worldHeight - 300, 120, 20, 0xffff88),
+    this.add.rectangle(1500, worldHeight - 600, 120, 20, 0x88ffff),
+    this.add.rectangle(1800, worldHeight - 400, 120, 20, 0xff88ff),
+    this.add.rectangle(2100, worldHeight - 250, 120, 20, 0x88ff44),
+    this.add.rectangle(400, worldHeight - 800, 120, 20, 0xff4444),
+    this.add.rectangle(1000, worldHeight - 900, 120, 20, 0x44ff44),
+    this.add.rectangle(2000, worldHeight - 1000, 120, 20, 0x4444ff),
   ];
   platforms.forEach(platform => {
     this.physics.add.existing(platform, true);
@@ -107,6 +120,10 @@ function create(this: Phaser.Scene) {
     setJumpBufferTimeMs: v => { jumpBufferTimeMs = v; },
     setJumpGravityMultiplier: v => { jumpGravityMultiplier = v; },
   });
+
+  // Camera follows the player and is clamped to world bounds
+  this.cameras.main.startFollow(player, true, 0.12, 0.12);
+  this.cameras.main.setRoundPixels(true);
 }
 
 function update(this: Phaser.Scene, time: number, delta: number) {
