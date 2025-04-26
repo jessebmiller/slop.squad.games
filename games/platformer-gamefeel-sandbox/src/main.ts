@@ -18,10 +18,14 @@ const config: Phaser.Types.Core.GameConfig = {
     create,
     update,
   },
+  input: {
+    gamepad: true
+  },
 };
 
 let player!: Phaser.Physics.Arcade.Sprite;
 let cursors: any;
+let pad: Phaser.Input.Gamepad.Gamepad | null = null;
 
 function preload(this: Phaser.Scene) {
   // Placeholder: use a simple rectangle for the player
@@ -42,10 +46,18 @@ function create(this: Phaser.Scene) {
 
   // Create cursors
   cursors = this.input.keyboard?.createCursorKeys() ?? {};
+
+  // Listen for gamepad connection
+  const result = this.input.gamepad?.once('connected', (padObj: Phaser.Input.Gamepad.Gamepad) => {
+    console.log('Gamepad connected');
+    pad = padObj;
+  });
+  console.log(result);
+  console.log(this.input.gamepad);
 }
 
 function update(this: Phaser.Scene) {
-  // Basic left/right/jump controls
+  // Keyboard controls
   if (cursors) {
     if (cursors.left.isDown) {
       player.setVelocityX(-200);
@@ -55,6 +67,27 @@ function update(this: Phaser.Scene) {
       player.setVelocityX(0);
     }
     if (cursors.up.isDown && player.body && (player.body as Phaser.Physics.Arcade.Body).touching.down) {
+      player.setVelocityY(-500);
+    }
+  }
+
+  // Gamepad controls
+  if (pad) {
+    // Left stick X axis
+    const axisH = pad.axes.length > 0 ? pad.axes[0].getValue() : 0;
+    if (axisH < -0.1) {
+      player.setVelocityX(-200);
+    } else if (axisH > 0.1) {
+      player.setVelocityX(200);
+    } else {
+      player.setVelocityX(0);
+    }
+    // A button (index 0) for jump
+    if (
+      pad.buttons[0].pressed &&
+      player.body &&
+      (player.body as Phaser.Physics.Arcade.Body).touching.down
+    ) {
       player.setVelocityY(-500);
     }
   }
