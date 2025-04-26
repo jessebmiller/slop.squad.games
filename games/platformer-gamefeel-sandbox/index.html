@@ -16,7 +16,17 @@
   <div id="game-container"></div>
   <div id="controls">
     <h2>Gamefeel Controls</h2>
-    <!-- Controls will be added here by JS -->
+    <label for="gravity">Gravity: <span id="gravity-value"></span></label>
+    <input type="range" id="gravity" min="100" max="3000" value="1000" step="10">
+
+    <label for="jumpStrength">Jump Strength: <span id="jumpStrength-value"></span></label>
+    <input type="range" id="jumpStrength" min="-1500" max="-100" value="-500" step="10">
+
+    <label for="moveSpeed">Move Speed: <span id="moveSpeed-value"></span></label>
+    <input type="range" id="moveSpeed" min="50" max="600" value="200" step="10">
+
+    <label for="coyoteTime">Coyote Time (ms): <span id="coyoteTime-value"></span></label>
+    <input type="range" id="coyoteTime" min="0" max="300" value="120" step="5">
   </div>
   <script type="module" src="./src/main.ts"></script>
 </body>
