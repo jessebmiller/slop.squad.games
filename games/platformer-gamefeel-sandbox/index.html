@@ -6,33 +6,57 @@
   <title>Platformer Gamefeel Sandbox</title>
   <style>
     body { margin: 0; background: #222; color: #fff; font-family: sans-serif; }
-    #game-container { display: block; margin: 0 auto; }
-    #controls { margin: 20px auto; max-width: 400px; background: #333; padding: 16px; border-radius: 8px; }
+    .main-layout {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 32px;
+      margin-top: 32px;
+    }
+    #game-container {
+      flex: 0 0 auto;
+      box-shadow: 0 4px 24px #0008;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #111;
+    }
+    #controls {
+      flex: 0 0 340px;
+      background: #333;
+      padding: 24px 20px;
+      border-radius: 12px;
+      margin: 0;
+      box-shadow: 0 2px 12px #0006;
+    }
     label { display: block; margin: 8px 0 4px; }
     input[type=range] { width: 100%; }
+    h2, h3 { margin-top: 0.5em; margin-bottom: 0.5em; }
   </style>
 </head>
 <body>
-  <div id="game-container"></div>
-  <div id="controls">
-    <h2>Gamefeel Controls</h2>
-    <label for="gravity">Gravity: <span id="gravity-value"></span></label>
-    <input type="range" id="gravity" min="100" max="3000" value="1000" step="10">
+  <div class="main-layout">
+    <div id="game-container"></div>
+    <div id="controls">
+      <h2>Gamefeel Controls</h2>
+      <h3>Movement</h3>
+      <label for="moveSpeed">Move Speed: <span id="moveSpeed-value"></span></label>
+      <input type="range" id="moveSpeed" min="50" max="600" value="200" step="10">
 
-    <label for="jumpStrength">Jump Strength: <span id="jumpStrength-value"></span></label>
-    <input type="range" id="jumpStrength" min="-1500" max="-100" value="-500" step="10">
+      <h3>Jump</h3>
+      <label for="jumpStrength">Jump Strength: <span id="jumpStrength-value"></span></label>
+      <input type="range" id="jumpStrength" min="-1500" max="-100" value="-500" step="10">
+      <label for="jumpBufferTime">Jump Buffer Time (ms): <span id="jumpBufferTime-value"></span></label>
+      <input type="range" id="jumpBufferTime" min="0" max="300" value="150" step="5">
+      <label for="jumpGravityMultiplier">Jump Gravity Multiplier: <span id="jumpGravityMultiplier-value"></span></label>
+      <input type="range" id="jumpGravityMultiplier" min="0.2" max="1.0" value="0.6" step="0.01">
 
-    <label for="moveSpeed">Move Speed: <span id="moveSpeed-value"></span></label>
-    <input type="range" id="moveSpeed" min="50" max="600" value="200" step="10">
-
-    <label for="coyoteTime">Coyote Time (ms): <span id="coyoteTime-value"></span></label>
-    <input type="range" id="coyoteTime" min="0" max="300" value="120" step="5">
-
-    <label for="jumpBufferTime">Jump Buffer Time (ms): <span id="jumpBufferTime-value"></span></label>
-    <input type="range" id="jumpBufferTime" min="0" max="300" value="150" step="5">
-
-    <label for="jumpGravityMultiplier">Jump Gravity Multiplier: <span id="jumpGravityMultiplier-value"></span></label>
-    <input type="range" id="jumpGravityMultiplier" min="0.2" max="1.0" value="0.6" step="0.01">
+      <h3>Gravity</h3>
+      <label for="gravity">Gravity: <span id="gravity-value"></span></label>
+      <input type="range" id="gravity" min="100" max="3000" value="1000" step="10">
+      <label for="coyoteTime">Coyote Time (ms): <span id="coyoteTime-value"></span></label>
+      <input type="range" id="coyoteTime" min="0" max="300" value="120" step="5">
+    </div>
   </div>
   <script type="module" src="./src/main.ts"></script>
 </body>

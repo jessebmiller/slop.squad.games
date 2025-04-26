@@ -27,6 +27,9 @@ const config: Phaser.Types.Core.GameConfig = {
 let player!: Phaser.Physics.Arcade.Sprite;
 let cursors: any;
 let pad: Phaser.Input.Gamepad.Gamepad | null = null;
+let keyA: Phaser.Input.Keyboard.Key;
+let keyD: Phaser.Input.Keyboard.Key;
+let keySpace: Phaser.Input.Keyboard.Key;
 
 // Gamefeel parameters (designer adjustable)
 let gravity = 1000;
@@ -76,8 +79,10 @@ function create(this: Phaser.Scene) {
     this.physics.add.collider(player, platform);
   });
 
-  // Create cursors
-  cursors = this.input.keyboard?.createCursorKeys() ?? {};
+  // Create WASD and Space keys
+  keyA = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+  keyD = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+  keySpace = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
   // Listen for gamepad connection
   const result = this.input.gamepad?.once('connected', (padObj: Phaser.Input.Gamepad.Gamepad) => {
@@ -115,18 +120,16 @@ function update(this: Phaser.Scene, time: number, delta: number) {
     coyoteTimer -= delta;
   }
 
-  // Keyboard controls
+  // Keyboard controls (A/D for left/right, Space for jump)
   let jumpPressed = false;
-  if (cursors) {
-    if (cursors.left.isDown) {
-      player.setVelocityX(-moveSpeed);
-    } else if (cursors.right.isDown) {
-      player.setVelocityX(moveSpeed);
-    } else {
-      player.setVelocityX(0);
-    }
-    jumpPressed = cursors.up.isDown;
+  if (keyA.isDown) {
+    player.setVelocityX(-moveSpeed);
+  } else if (keyD.isDown) {
+    player.setVelocityX(moveSpeed);
+  } else {
+    player.setVelocityX(0);
   }
+  jumpPressed = keySpace.isDown;
 
   // Gamepad controls
   if (pad) {
