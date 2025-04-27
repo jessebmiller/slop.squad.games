@@ -7,6 +7,17 @@ export function setupDesignerUI(
     coyoteTimeMs,
     jumpBufferTimeMs,
     jumpGravityMultiplier,
+    cameraLerpX,
+    cameraLerpY,
+    cameraDeadzoneWidth,
+    cameraDeadzoneHeight,
+    cameraLookaheadX,
+    cameraLookaheadY,
+    cameraLookaheadSmoothingX,
+    cameraLookaheadSmoothingY,
+    cameraLookaheadThresholdX,
+    cameraLookaheadThresholdY,
+    showDeadzoneDebug,
   }: {
     gravity: () => number;
     jumpStrength: () => number;
@@ -14,6 +25,17 @@ export function setupDesignerUI(
     coyoteTimeMs: () => number;
     jumpBufferTimeMs: () => number;
     jumpGravityMultiplier: () => number;
+    cameraLerpX: () => number;
+    cameraLerpY: () => number;
+    cameraDeadzoneWidth: () => number;
+    cameraDeadzoneHeight: () => number;
+    cameraLookaheadX: () => number;
+    cameraLookaheadY: () => number;
+    cameraLookaheadSmoothingX: () => number;
+    cameraLookaheadSmoothingY: () => number;
+    cameraLookaheadThresholdX: () => number;
+    cameraLookaheadThresholdY: () => number;
+    showDeadzoneDebug: () => boolean;
   },
   setters: {
     setGravity: (v: number) => void;
@@ -22,6 +44,17 @@ export function setupDesignerUI(
     setCoyoteTimeMs: (v: number) => void;
     setJumpBufferTimeMs: (v: number) => void;
     setJumpGravityMultiplier: (v: number) => void;
+    setCameraLerpX: (v: number) => void;
+    setCameraLerpY: (v: number) => void;
+    setCameraDeadzoneWidth: (v: number) => void;
+    setCameraDeadzoneHeight: (v: number) => void;
+    setCameraLookaheadX: (v: number) => void;
+    setCameraLookaheadY: (v: number) => void;
+    setCameraLookaheadSmoothingX: (v: number) => void;
+    setCameraLookaheadSmoothingY: (v: number) => void;
+    setCameraLookaheadThresholdX: (v: number) => void;
+    setCameraLookaheadThresholdY: (v: number) => void;
+    setShowDeadzoneDebug: (v: boolean) => void;
   }
 ) {
   const gravitySlider = document.getElementById('gravity') as HTMLInputElement;
@@ -78,4 +111,105 @@ export function setupDesignerUI(
     setters.setJumpGravityMultiplier(parseFloat(jumpGravitySlider.value));
     jumpGravityValue!.textContent = jumpGravitySlider.value;
   };
+
+  const cameraLerpXSlider = document.getElementById('cameraLerpX') as HTMLInputElement;
+  const cameraLerpXValue = document.getElementById('cameraLerpX-value');
+  cameraLerpXSlider.value = cameraLerpX().toString();
+  cameraLerpXValue!.textContent = cameraLerpX().toString();
+  cameraLerpXSlider.oninput = () => {
+    setters.setCameraLerpX(parseFloat(cameraLerpXSlider.value));
+    cameraLerpXValue!.textContent = cameraLerpXSlider.value;
+  };
+
+  const cameraLerpYSlider = document.getElementById('cameraLerpY') as HTMLInputElement;
+  const cameraLerpYValue = document.getElementById('cameraLerpY-value');
+  cameraLerpYSlider.value = cameraLerpY().toString();
+  cameraLerpYValue!.textContent = cameraLerpY().toString();
+  cameraLerpYSlider.oninput = () => {
+    setters.setCameraLerpY(parseFloat(cameraLerpYSlider.value));
+    cameraLerpYValue!.textContent = cameraLerpYSlider.value;
+  };
+
+  const cameraDeadzoneWidthSlider = document.getElementById('cameraDeadzoneWidth') as HTMLInputElement;
+  const cameraDeadzoneWidthValue = document.getElementById('cameraDeadzoneWidth-value');
+  cameraDeadzoneWidthSlider.value = cameraDeadzoneWidth().toString();
+  cameraDeadzoneWidthValue!.textContent = cameraDeadzoneWidth().toString();
+  cameraDeadzoneWidthSlider.oninput = () => {
+    setters.setCameraDeadzoneWidth(parseInt(cameraDeadzoneWidthSlider.value, 10));
+    cameraDeadzoneWidthValue!.textContent = cameraDeadzoneWidthSlider.value;
+  };
+
+  const cameraDeadzoneHeightSlider = document.getElementById('cameraDeadzoneHeight') as HTMLInputElement;
+  const cameraDeadzoneHeightValue = document.getElementById('cameraDeadzoneHeight-value');
+  cameraDeadzoneHeightSlider.value = cameraDeadzoneHeight().toString();
+  cameraDeadzoneHeightValue!.textContent = cameraDeadzoneHeight().toString();
+  cameraDeadzoneHeightSlider.oninput = () => {
+    setters.setCameraDeadzoneHeight(parseInt(cameraDeadzoneHeightSlider.value, 10));
+    cameraDeadzoneHeightValue!.textContent = cameraDeadzoneHeightSlider.value;
+  };
+
+  const cameraLookaheadXSlider = document.getElementById('cameraLookaheadX') as HTMLInputElement;
+  const cameraLookaheadXValue = document.getElementById('cameraLookaheadX-value');
+  cameraLookaheadXSlider.value = cameraLookaheadX().toString();
+  cameraLookaheadXValue!.textContent = cameraLookaheadX().toString();
+  cameraLookaheadXSlider.oninput = () => {
+    setters.setCameraLookaheadX(parseInt(cameraLookaheadXSlider.value, 10));
+    cameraLookaheadXValue!.textContent = cameraLookaheadXSlider.value;
+  };
+
+  const cameraLookaheadYSlider = document.getElementById('cameraLookaheadY') as HTMLInputElement;
+  const cameraLookaheadYValue = document.getElementById('cameraLookaheadY-value');
+  cameraLookaheadYSlider.value = cameraLookaheadY().toString();
+  cameraLookaheadYValue!.textContent = cameraLookaheadY().toString();
+  cameraLookaheadYSlider.oninput = () => {
+    setters.setCameraLookaheadY(parseInt(cameraLookaheadYSlider.value, 10));
+    cameraLookaheadYValue!.textContent = cameraLookaheadYSlider.value;
+  };
+
+  const cameraLookaheadSmoothingXSlider = document.getElementById('cameraLookaheadSmoothingX') as HTMLInputElement;
+  const cameraLookaheadSmoothingXValue = document.getElementById('cameraLookaheadSmoothingX-value');
+  cameraLookaheadSmoothingXSlider.value = cameraLookaheadSmoothingX().toString();
+  cameraLookaheadSmoothingXValue!.textContent = cameraLookaheadSmoothingX().toString();
+  cameraLookaheadSmoothingXSlider.oninput = () => {
+    setters.setCameraLookaheadSmoothingX(parseFloat(cameraLookaheadSmoothingXSlider.value));
+    cameraLookaheadSmoothingXValue!.textContent = cameraLookaheadSmoothingXSlider.value;
+  };
+
+  const cameraLookaheadSmoothingYSlider = document.getElementById('cameraLookaheadSmoothingY') as HTMLInputElement;
+  const cameraLookaheadSmoothingYValue = document.getElementById('cameraLookaheadSmoothingY-value');
+  cameraLookaheadSmoothingYSlider.value = cameraLookaheadSmoothingY().toString();
+  cameraLookaheadSmoothingYValue!.textContent = cameraLookaheadSmoothingY().toString();
+  cameraLookaheadSmoothingYSlider.oninput = () => {
+    setters.setCameraLookaheadSmoothingY(parseFloat(cameraLookaheadSmoothingYSlider.value));
+    cameraLookaheadSmoothingYValue!.textContent = cameraLookaheadSmoothingYSlider.value;
+  };
+
+  // Camera Lookahead Threshold X
+  const cameraLookaheadThresholdXSlider = document.getElementById('cameraLookaheadThresholdX') as HTMLInputElement;
+  const cameraLookaheadThresholdXValue = document.getElementById('cameraLookaheadThresholdX-value');
+  cameraLookaheadThresholdXSlider.value = cameraLookaheadThresholdX().toString();
+  cameraLookaheadThresholdXValue!.textContent = cameraLookaheadThresholdX().toString();
+  cameraLookaheadThresholdXSlider.oninput = () => {
+    setters.setCameraLookaheadThresholdX(parseFloat(cameraLookaheadThresholdXSlider.value));
+    cameraLookaheadThresholdXValue!.textContent = cameraLookaheadThresholdXSlider.value;
+  };
+
+  // Camera Lookahead Threshold Y
+  const cameraLookaheadThresholdYSlider = document.getElementById('cameraLookaheadThresholdY') as HTMLInputElement;
+  const cameraLookaheadThresholdYValue = document.getElementById('cameraLookaheadThresholdY-value');
+  cameraLookaheadThresholdYSlider.value = cameraLookaheadThresholdY().toString();
+  cameraLookaheadThresholdYValue!.textContent = cameraLookaheadThresholdY().toString();
+  cameraLookaheadThresholdYSlider.oninput = () => {
+    setters.setCameraLookaheadThresholdY(parseFloat(cameraLookaheadThresholdYSlider.value));
+    cameraLookaheadThresholdYValue!.textContent = cameraLookaheadThresholdYSlider.value;
+  };
+
+  // Checkbox for deadzone debug overlay
+  const showDeadzoneDebugCheckbox = document.getElementById('showDeadzoneDebug') as HTMLInputElement;
+  if (showDeadzoneDebugCheckbox) {
+    showDeadzoneDebugCheckbox.checked = showDeadzoneDebug();
+    showDeadzoneDebugCheckbox.onchange = () => {
+      setters.setShowDeadzoneDebug(showDeadzoneDebugCheckbox.checked);
+    };
+  }
 } 

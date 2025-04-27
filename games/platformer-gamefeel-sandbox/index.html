@@ -56,6 +56,32 @@
       <input type="range" id="gravity" min="100" max="3000" value="1000" step="10">
       <label for="coyoteTime">Coyote Time (ms): <span id="coyoteTime-value"></span></label>
       <input type="range" id="coyoteTime" min="0" max="300" value="120" step="5">
+
+      <h3>Camera</h3>
+      <label for="cameraLerpX">Camera Lerp X: <span id="cameraLerpX-value"></span></label>
+      <input type="range" id="cameraLerpX" min="0.01" max="1.0" value="0.12" step="0.01">
+      <label for="cameraLerpY">Camera Lerp Y: <span id="cameraLerpY-value"></span></label>
+      <input type="range" id="cameraLerpY" min="0.01" max="1.0" value="0.12" step="0.01">
+      <label for="cameraDeadzoneWidth">Camera Deadzone Width: <span id="cameraDeadzoneWidth-value"></span></label>
+      <input type="range" id="cameraDeadzoneWidth" min="1" max="800" value="200" step="1">
+      <label for="cameraDeadzoneHeight">Camera Deadzone Height: <span id="cameraDeadzoneHeight-value"></span></label>
+      <input type="range" id="cameraDeadzoneHeight" min="1" max="600" value="150" step="1">
+      <label for="cameraLookaheadX">Camera Lookahead X: <span id="cameraLookaheadX-value"></span></label>
+      <input type="range" id="cameraLookaheadX" min="0" max="400" value="120" step="1">
+      <label for="cameraLookaheadY">Camera Lookahead Y: <span id="cameraLookaheadY-value"></span></label>
+      <input type="range" id="cameraLookaheadY" min="0" max="300" value="60" step="1">
+      <label for="cameraLookaheadSmoothingX">Camera Lookahead Smoothing X: <span id="cameraLookaheadSmoothingX-value"></span></label>
+      <input type="range" id="cameraLookaheadSmoothingX" min="0.01" max="1.0" value="0.15" step="0.01">
+      <label for="cameraLookaheadSmoothingY">Camera Lookahead Smoothing Y: <span id="cameraLookaheadSmoothingY-value"></span></label>
+      <input type="range" id="cameraLookaheadSmoothingY" min="0.01" max="1.0" value="0.15" step="0.01">
+      <label for="cameraLookaheadThresholdX">Camera Lookahead Threshold X: <span id="cameraLookaheadThresholdX-value"></span></label>
+      <input type="range" id="cameraLookaheadThresholdX" min="0" max="100" value="5" step="1">
+      <label for="cameraLookaheadThresholdY">Camera Lookahead Threshold Y: <span id="cameraLookaheadThresholdY-value"></span></label>
+      <input type="range" id="cameraLookaheadThresholdY" min="0" max="100" value="5" step="1">
+      <label for="showDeadzoneDebug" style="margin-top: 12px; display: flex; align-items: center; gap: 8px;">
+        <input type="checkbox" id="showDeadzoneDebug">
+        Show Deadzone Debug Overlay
+      </label>
     </div>
   </div>
   <script type="module" src="./src/main.ts"></script>

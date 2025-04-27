@@ -1,5 +1,8 @@
 import Phaser from 'phaser';
 import { setupDesignerUI } from './designerUI';
+import { createPlayer, updatePlayer, PlayerState, PlayerParameters } from './player';
+import { getInputState } from './input';
+import { createCameraState, setupCamera, updateCamera, CameraState, CameraParameters } from './camera';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -24,27 +27,34 @@ const config: Phaser.Types.Core.GameConfig = {
   },
 };
 
-let player!: Phaser.Physics.Arcade.Sprite;
-let cursors: any;
+let playerState!: PlayerState;
+let cameraState!: CameraState;
 let pad: Phaser.Input.Gamepad.Gamepad | null = null;
-let keyA: Phaser.Input.Keyboard.Key;
-let keyD: Phaser.Input.Keyboard.Key;
-let keySpace: Phaser.Input.Keyboard.Key;
 
 // Gamefeel parameters (designer adjustable)
-let gravity = 1000;
-let jumpStrength = -500;
-let moveSpeed = 200;
-let coyoteTimeMs = 120; // milliseconds
-let jumpBufferTimeMs = 150; // milliseconds
-let jumpGravityMultiplier = 0.6; // Only applies while rising and jump is held
+const playerParameters: PlayerParameters = {
+  gravity: 1000,
+  jumpStrength: -500,
+  moveSpeed: 200,
+  coyoteTimeMs: 120,
+  jumpBufferTimeMs: 150,
+  jumpGravityMultiplier: 0.6,
+};
 
-// Coyote time state
-let coyoteTimer = 0;
-let wasOnGround = false;
-let prevJumpPressed = false;
-// Jump buffer state
-let jumpBufferTimer = 0;
+// Camera parameters (designer adjustable)
+const cameraParameters: CameraParameters = {
+  lerpX: 0.12,
+  lerpY: 0.12,
+  deadzoneWidth: 200,
+  deadzoneHeight: 150,
+  lookaheadX: 120,
+  lookaheadY: 60,
+  lookaheadSmoothingX: 0.15,
+  lookaheadSmoothingY: 0.15,
+  lookaheadThresholdX: 5,
+  lookaheadThresholdY: 5,
+  showDeadzoneDebug: false,
+};
 
 function preload(this: Phaser.Scene) {
   // Placeholder: use a simple rectangle for the player
@@ -57,13 +67,8 @@ function create(this: Phaser.Scene) {
   this.physics.world.setBounds(0, 0, worldWidth, worldHeight);
   this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
 
-  // Create player near the left side
-  player = this.physics.add.sprite(100, worldHeight - 100, '');
-  player.setDisplaySize(40, 60);
-  player.setCollideWorldBounds(true);
-
-  // Set initial gravity
-  this.physics.world.gravity.y = gravity;
+  // Create player
+  playerState = createPlayer(this, 100, worldHeight - 100);
 
   // Create ground (spans the whole world)
   const ground = this.add.rectangle(worldWidth / 2, worldHeight - 20, worldWidth, 40, 0x888888);
@@ -87,115 +92,75 @@ function create(this: Phaser.Scene) {
   });
 
   // Add all colliders
-  this.physics.add.collider(player, ground);
+  this.physics.add.collider(playerState.sprite, ground);
   platforms.forEach(platform => {
-    this.physics.add.collider(player, platform);
+    this.physics.add.collider(playerState.sprite, platform);
   });
 
-  // Create WASD and Space keys
-  keyA = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-  keyD = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-  keySpace = this.input.keyboard!.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-
   // Listen for gamepad connection
-  const result = this.input.gamepad?.once('connected', (padObj: Phaser.Input.Gamepad.Gamepad) => {
+  this.input.gamepad?.once('connected', (padObj: Phaser.Input.Gamepad.Gamepad) => {
     console.log('Gamepad connected');
     pad = padObj;
   });
-  console.log(result);
-  console.log(this.input.gamepad);
+
+  // Setup camera
+  cameraState = createCameraState(this);
+  setupCamera(this, playerState.sprite, cameraParameters);
 
   setupDesignerUI(this, {
-    gravity: () => gravity,
-    jumpStrength: () => jumpStrength,
-    moveSpeed: () => moveSpeed,
-    coyoteTimeMs: () => coyoteTimeMs,
-    jumpBufferTimeMs: () => jumpBufferTimeMs,
-    jumpGravityMultiplier: () => jumpGravityMultiplier,
+    gravity: () => playerParameters.gravity,
+    jumpStrength: () => playerParameters.jumpStrength,
+    moveSpeed: () => playerParameters.moveSpeed,
+    coyoteTimeMs: () => playerParameters.coyoteTimeMs,
+    jumpBufferTimeMs: () => playerParameters.jumpBufferTimeMs,
+    jumpGravityMultiplier: () => playerParameters.jumpGravityMultiplier,
+    cameraLerpX: () => cameraParameters.lerpX,
+    cameraLerpY: () => cameraParameters.lerpY,
+    cameraDeadzoneWidth: () => cameraParameters.deadzoneWidth,
+    cameraDeadzoneHeight: () => cameraParameters.deadzoneHeight,
+    cameraLookaheadX: () => cameraParameters.lookaheadX,
+    cameraLookaheadY: () => cameraParameters.lookaheadY,
+    cameraLookaheadSmoothingX: () => cameraParameters.lookaheadSmoothingX,
+    cameraLookaheadSmoothingY: () => cameraParameters.lookaheadSmoothingY,
+    cameraLookaheadThresholdX: () => cameraParameters.lookaheadThresholdX,
+    cameraLookaheadThresholdY: () => cameraParameters.lookaheadThresholdY,
+    showDeadzoneDebug: () => cameraParameters.showDeadzoneDebug,
   }, {
-    setGravity: v => { gravity = v; },
-    setJumpStrength: v => { jumpStrength = v; },
-    setMoveSpeed: v => { moveSpeed = v; },
-    setCoyoteTimeMs: v => { coyoteTimeMs = v; },
-    setJumpBufferTimeMs: v => { jumpBufferTimeMs = v; },
-    setJumpGravityMultiplier: v => { jumpGravityMultiplier = v; },
+    setGravity: v => { playerParameters.gravity = v; },
+    setJumpStrength: v => { playerParameters.jumpStrength = v; },
+    setMoveSpeed: v => { playerParameters.moveSpeed = v; },
+    setCoyoteTimeMs: v => { playerParameters.coyoteTimeMs = v; },
+    setJumpBufferTimeMs: v => { playerParameters.jumpBufferTimeMs = v; },
+    setJumpGravityMultiplier: v => { playerParameters.jumpGravityMultiplier = v; },
+    setCameraLerpX: v => { cameraParameters.lerpX = v; },
+    setCameraLerpY: v => { cameraParameters.lerpY = v; },
+    setCameraDeadzoneWidth: v => { cameraParameters.deadzoneWidth = v; },
+    setCameraDeadzoneHeight: v => { cameraParameters.deadzoneHeight = v; },
+    setCameraLookaheadX: v => { cameraParameters.lookaheadX = v; },
+    setCameraLookaheadY: v => { cameraParameters.lookaheadY = v; },
+    setCameraLookaheadSmoothingX: v => { cameraParameters.lookaheadSmoothingX = v; },
+    setCameraLookaheadSmoothingY: v => { cameraParameters.lookaheadSmoothingY = v; },
+    setCameraLookaheadThresholdX: v => { cameraParameters.lookaheadThresholdX = v; },
+    setCameraLookaheadThresholdY: v => { cameraParameters.lookaheadThresholdY = v; },
+    setShowDeadzoneDebug: v => { cameraParameters.showDeadzoneDebug = v; },
   });
-
-  // Camera follows the player and is clamped to world bounds
-  this.cameras.main.startFollow(player, true, 0.12, 0.12);
-  this.cameras.main.setRoundPixels(true);
 }
 
 function update(this: Phaser.Scene, time: number, delta: number) {
-  // Track if player is on ground
-  const onGround = !!(player.body && (player.body as Phaser.Physics.Arcade.Body).touching.down);
+  // Get current input state
+  const input = getInputState(this, pad);
 
-  // Coyote time logic
-  if (onGround) {
-    coyoteTimer = coyoteTimeMs;
-  } else if (coyoteTimer > 0) {
-    coyoteTimer -= delta;
-  }
+  // Update player
+  playerState = updatePlayer(playerState, delta, playerParameters, input, this);
 
-  // Keyboard controls (A/D for left/right, Space for jump)
-  let jumpPressed = false;
-  if (keyA.isDown) {
-    player.setVelocityX(-moveSpeed);
-  } else if (keyD.isDown) {
-    player.setVelocityX(moveSpeed);
-  } else {
-    player.setVelocityX(0);
-  }
-  jumpPressed = keySpace.isDown;
-
-  // Gamepad controls
-  if (pad) {
-    const axisH = pad.axes.length > 0 ? pad.axes[0].getValue() : 0;
-    if (axisH < -0.1) {
-      player.setVelocityX(-moveSpeed);
-    } else if (axisH > 0.1) {
-      player.setVelocityX(moveSpeed);
-    } else {
-      player.setVelocityX(0);
-    }
-    if (pad.buttons[0].pressed) {
-      jumpPressed = true;
-    }
-  }
-
-  // Jump buffering logic
-  if (jumpPressed && !prevJumpPressed) {
-    jumpBufferTimer = jumpBufferTimeMs;
-  } else if (jumpBufferTimer > 0) {
-    jumpBufferTimer -= delta;
-  }
-
-  // Jump logic with coyote time and jump buffer
-  if (
-    jumpBufferTimer > 0 &&
-    coyoteTimer > 0 &&
-    player.body
-  ) {
-    player.setVelocityY(jumpStrength);
-    coyoteTimer = 0;
-    jumpBufferTimer = 0;
-  }
-
-  // Gravity tweak: apply jump gravity multiplier only while rising and jump is held
-  if (player.body) {
-    const body = player.body as Phaser.Physics.Arcade.Body;
-    const rising = body.velocity.y < 0;
-    if (rising && prevJumpPressed) {
-      body.setAccelerationY(gravity * (jumpGravityMultiplier - 1));
-      this.physics.world.gravity.y = gravity * jumpGravityMultiplier;
-    } else {
-      body.setAccelerationY(0);
-      this.physics.world.gravity.y = gravity;
-    }
-  }
-
-  prevJumpPressed = jumpPressed;
-  wasOnGround = onGround;
+  // Update camera
+  cameraState = updateCamera(
+    cameraState,
+    this,
+    playerState.sprite,
+    cameraParameters,
+    playerParameters.moveSpeed
+  );
 }
 
 new Phaser.Game(config); 
