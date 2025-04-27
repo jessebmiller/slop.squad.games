@@ -3,6 +3,8 @@ import { setupDesignerUI } from './designerUI';
 import { createPlayer, updatePlayer, PlayerState, PlayerParameters } from './player';
 import { getInputState } from './input';
 import { createCameraState, setupCamera, updateCamera, CameraState, CameraParameters } from './camera';
+import { saveCurrentConfig, getCurrentConfig, loadNamedConfig, getAllSavedConfigs, GameConfig } from './configStorage';
+import { setupConfigUI } from './configUI';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -55,6 +57,13 @@ const cameraParameters: CameraParameters = {
   lookaheadThresholdY: 5,
 };
 
+// Load saved config if it exists
+const savedConfig = getCurrentConfig();
+if (savedConfig) {
+  Object.assign(playerParameters, savedConfig.player);
+  Object.assign(cameraParameters, savedConfig.camera);
+}
+
 function preload(this: Phaser.Scene) {
   // Placeholder: use a simple rectangle for the player
 }
@@ -106,41 +115,8 @@ function create(this: Phaser.Scene) {
   cameraState = createCameraState(this);
   setupCamera(this, playerState.sprite, cameraParameters);
 
-  setupDesignerUI(this, {
-    gravity: () => playerParameters.gravity,
-    jumpStrength: () => playerParameters.jumpStrength,
-    moveSpeed: () => playerParameters.moveSpeed,
-    coyoteTimeMs: () => playerParameters.coyoteTimeMs,
-    jumpBufferTimeMs: () => playerParameters.jumpBufferTimeMs,
-    jumpGravityMultiplier: () => playerParameters.jumpGravityMultiplier,
-    cameraLerpX: () => cameraParameters.lerpX,
-    cameraLerpY: () => cameraParameters.lerpY,
-    cameraDeadzoneWidth: () => cameraParameters.deadzoneWidth,
-    cameraDeadzoneHeight: () => cameraParameters.deadzoneHeight,
-    cameraLookaheadX: () => cameraParameters.lookaheadX,
-    cameraLookaheadY: () => cameraParameters.lookaheadY,
-    cameraLookaheadSmoothingX: () => cameraParameters.lookaheadSmoothingX,
-    cameraLookaheadSmoothingY: () => cameraParameters.lookaheadSmoothingY,
-    cameraLookaheadThresholdX: () => cameraParameters.lookaheadThresholdX,
-    cameraLookaheadThresholdY: () => cameraParameters.lookaheadThresholdY,
-  }, {
-    setGravity: v => { playerParameters.gravity = v; },
-    setJumpStrength: v => { playerParameters.jumpStrength = v; },
-    setMoveSpeed: v => { playerParameters.moveSpeed = v; },
-    setCoyoteTimeMs: v => { playerParameters.coyoteTimeMs = v; },
-    setJumpBufferTimeMs: v => { playerParameters.jumpBufferTimeMs = v; },
-    setJumpGravityMultiplier: v => { playerParameters.jumpGravityMultiplier = v; },
-    setCameraLerpX: v => { cameraParameters.lerpX = v; },
-    setCameraLerpY: v => { cameraParameters.lerpY = v; },
-    setCameraDeadzoneWidth: v => { cameraParameters.deadzoneWidth = v; },
-    setCameraDeadzoneHeight: v => { cameraParameters.deadzoneHeight = v; },
-    setCameraLookaheadX: v => { cameraParameters.lookaheadX = v; },
-    setCameraLookaheadY: v => { cameraParameters.lookaheadY = v; },
-    setCameraLookaheadSmoothingX: v => { cameraParameters.lookaheadSmoothingX = v; },
-    setCameraLookaheadSmoothingY: v => { cameraParameters.lookaheadSmoothingY = v; },
-    setCameraLookaheadThresholdX: v => { cameraParameters.lookaheadThresholdX = v; },
-    setCameraLookaheadThresholdY: v => { cameraParameters.lookaheadThresholdY = v; },
-  });
+  // Setup designer UI with config management
+  setupDesignerUI(playerParameters, cameraParameters);
 }
 
 function update(this: Phaser.Scene, time: number, delta: number) {
