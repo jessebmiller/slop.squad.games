@@ -47,15 +47,24 @@ export function setupDesignerUI(
         camera: cameraParameters 
       });
     }, 0, 2000, 10, 'Strength of gravity affecting the player'),
-    createSlider('Jump Strength', () => playerParameters.jumpStrength, v => { 
-      playerParameters.jumpStrength = v;
+    createSlider('Jump Strength', () => -playerParameters.jumpStrength, v => { 
+      playerParameters.jumpStrength = -v;
       const currentConfig = getCurrentConfig();
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
         camera: cameraParameters 
       });
-    }, -1000, 0, 10, 'Initial upward velocity when jumping'),
+    }, 0, 1000, 10, 'Initial upward velocity when jumping (higher = stronger jump)'),
+    createSlider('Jump Gravity Multiplier', () => playerParameters.jumpGravityMultiplier, v => { 
+      playerParameters.jumpGravityMultiplier = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
+    }, 0, 1, 0.05, 'Gravity multiplier while jumping (lower = floatier jumps)'),
     createSlider('Move Speed', () => playerParameters.moveSpeed, v => { 
       playerParameters.moveSpeed = v;
       const currentConfig = getCurrentConfig();
@@ -82,16 +91,7 @@ export function setupDesignerUI(
         player: playerParameters, 
         camera: cameraParameters 
       });
-    }, 0, 500, 10, 'Time window before landing where jump input is remembered'),
-    createSlider('Jump Gravity Multiplier', () => playerParameters.jumpGravityMultiplier, v => { 
-      playerParameters.jumpGravityMultiplier = v;
-      const currentConfig = getCurrentConfig();
-      saveCurrentConfig({ 
-        name: currentConfig?.name || '', 
-        player: playerParameters, 
-        camera: cameraParameters 
-      });
-    }, 0, 1, 0.05, 'Gravity multiplier while jumping (lower = floatier jumps)')
+    }, 0, 500, 10, 'Time window before landing where jump input is remembered')
   ];
 
   // Camera parameters
@@ -381,11 +381,16 @@ function createSection(title: string, isCollapsible: boolean = true): HTMLElemen
     
     const content = document.createElement('div');
     content.className = 'section-content';
+    
+    // Get initial state from localStorage
+    const sectionKey = `section_${title}`;
+    const isExpanded = localStorage.getItem(sectionKey) === 'true';
     content.style.cssText = `
       overflow: hidden;
       transition: max-height 0.2s ease-out;
-      max-height: 0px;
+      max-height: ${isExpanded ? '1000px' : '0px'};
     `;
+    toggle.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
     
     header.appendChild(heading);
     header.appendChild(toggle);
@@ -396,6 +401,8 @@ function createSection(title: string, isCollapsible: boolean = true): HTMLElemen
       const isExpanded = content.style.maxHeight !== '0px';
       content.style.maxHeight = isExpanded ? '0px' : '1000px';
       toggle.style.transform = isExpanded ? 'rotate(-90deg)' : 'rotate(0deg)';
+      // Save state to localStorage
+      localStorage.setItem(sectionKey, (!isExpanded).toString());
     };
   } else {
     const heading = document.createElement('h3');
