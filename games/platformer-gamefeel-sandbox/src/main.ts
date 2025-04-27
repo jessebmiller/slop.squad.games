@@ -65,7 +65,14 @@ if (savedConfig) {
 }
 
 function preload(this: Phaser.Scene) {
-  // Placeholder: use a simple rectangle for the player
+  // Load player sprite sheet
+  // The sprite sheet should be 32x32 pixels per frame
+  // Total width: 32 * 18 frames = 576 pixels
+  // Total height: 32 pixels
+  this.load.spritesheet('player', 'assets/player/player.png', {
+    frameWidth: 32,
+    frameHeight: 32,
+  });
 }
 
 function create(this: Phaser.Scene) {

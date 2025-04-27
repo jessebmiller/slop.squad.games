@@ -1,4 +1,5 @@
 import Phaser from 'phaser';
+import { AnimationState, createAnimations, getAnimationForState, ANIMATION_CONFIGS } from './player/animations';
 
 export type PlayerState = {
   sprite: Phaser.Physics.Arcade.Sprite;
@@ -6,6 +7,7 @@ export type PlayerState = {
   wasOnGround: boolean;
   prevJumpPressed: boolean;
   jumpBufferTimer: number;
+  currentAnimation: AnimationState;
 };
 
 export type PlayerParameters = {
@@ -24,9 +26,16 @@ export type PlayerInput = {
 };
 
 export const createPlayer = (scene: Phaser.Scene, x: number, y: number): PlayerState => {
-  const sprite = scene.physics.add.sprite(x, y, '');
+  // Create the sprite with the player texture
+  const sprite = scene.physics.add.sprite(x, y, 'player');
   sprite.setDisplaySize(40, 60);
   sprite.setCollideWorldBounds(true);
+
+  // Create all animations
+  createAnimations(scene, 'player');
+
+  // Start with idle animation
+  sprite.play('player-idle');
 
   return {
     sprite,
@@ -34,6 +43,7 @@ export const createPlayer = (scene: Phaser.Scene, x: number, y: number): PlayerS
     wasOnGround: false,
     prevJumpPressed: false,
     jumpBufferTimer: 0,
+    currentAnimation: 'idle',
   };
 };
 
@@ -65,8 +75,10 @@ export const updatePlayer = (
   // Movement
   if (input.left) {
     state.sprite.setVelocityX(-parameters.moveSpeed);
+    state.sprite.setFlipX(true);
   } else if (input.right) {
     state.sprite.setVelocityX(parameters.moveSpeed);
+    state.sprite.setFlipX(false);
   } else {
     state.sprite.setVelocityX(0);
   }
@@ -89,6 +101,14 @@ export const updatePlayer = (
       body.setAccelerationY(0);
       scene.physics.world.gravity.y = parameters.gravity;
     }
+  }
+
+  // Update animation
+  const newAnimation = getAnimationForState(state, input, state.wasOnGround);
+  if (newAnimation !== state.currentAnimation) {
+    const config = ANIMATION_CONFIGS[newAnimation];
+    state.sprite.play(config.key);
+    state.currentAnimation = newAnimation;
   }
 
   return {
