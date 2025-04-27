@@ -34,7 +34,7 @@ export function setupDesignerUI(
   // Create sections for different parameter groups
   const playerSection = createSection('Player Movement');
   const cameraSection = createSection('Camera Settings');
-  const configSection = createSection('Config Management');
+  const configSection = createSection('Config Management', false);
 
   // Player parameters
   const playerSliders: ParameterSlider[] = [
@@ -226,10 +226,7 @@ export function setupDesignerUI(
   
   const loadSelect = document.createElement('select');
   loadSelect.style.cssText = 'flex: 1; padding: 5px; border: none; border-radius: 4px;';
-  
-  const loadButton = document.createElement('button');
-  loadButton.textContent = 'Load';
-  loadButton.onclick = () => {
+  loadSelect.onchange = () => {
     const name = loadSelect.value;
     if (name) {
       const config = loadNamedConfig(name);
@@ -261,7 +258,6 @@ export function setupDesignerUI(
   };
   
   loadContainer.appendChild(loadSelect);
-  loadContainer.appendChild(loadButton);
   loadContainer.appendChild(deleteButton);
   
   // Function to update the config list
@@ -358,48 +354,59 @@ export function setupDesignerUI(
   return container;
 }
 
-function createSection(title: string): HTMLElement {
+function createSection(title: string, isCollapsible: boolean = true): HTMLElement {
   const section = document.createElement('section');
   section.className = 'collapsible-section';
   
-  const header = document.createElement('div');
-  header.className = 'section-header';
-  header.style.cssText = `
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    cursor: pointer;
-    padding: 5px;
-    border-radius: 4px;
-    background: rgba(255, 255, 255, 0.1);
-  `;
-  
-  const heading = document.createElement('h3');
-  heading.textContent = title;
-  heading.style.margin = '0';
-  
-  const toggle = document.createElement('span');
-  toggle.textContent = '▼';
-  toggle.style.transition = 'transform 0.2s';
-  
-  const content = document.createElement('div');
-  content.className = 'section-content';
-  content.style.cssText = `
-    overflow: hidden;
-    transition: max-height 0.2s ease-out;
-    max-height: 1000px;
-  `;
-  
-  header.appendChild(heading);
-  header.appendChild(toggle);
-  section.appendChild(header);
-  section.appendChild(content);
-  
-  header.onclick = () => {
-    const isExpanded = content.style.maxHeight !== '0px';
-    content.style.maxHeight = isExpanded ? '0px' : '1000px';
-    toggle.style.transform = isExpanded ? 'rotate(-90deg)' : 'rotate(0deg)';
-  };
+  if (isCollapsible) {
+    const header = document.createElement('div');
+    header.className = 'section-header';
+    header.style.cssText = `
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 5px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.1);
+    `;
+    
+    const heading = document.createElement('h3');
+    heading.textContent = title;
+    heading.style.margin = '0';
+    
+    const toggle = document.createElement('span');
+    toggle.textContent = '▼';
+    toggle.style.transition = 'transform 0.2s';
+    
+    const content = document.createElement('div');
+    content.className = 'section-content';
+    content.style.cssText = `
+      overflow: hidden;
+      transition: max-height 0.2s ease-out;
+      max-height: 0px;
+    `;
+    
+    header.appendChild(heading);
+    header.appendChild(toggle);
+    section.appendChild(header);
+    section.appendChild(content);
+    
+    header.onclick = () => {
+      const isExpanded = content.style.maxHeight !== '0px';
+      content.style.maxHeight = isExpanded ? '0px' : '1000px';
+      toggle.style.transform = isExpanded ? 'rotate(-90deg)' : 'rotate(0deg)';
+    };
+  } else {
+    const heading = document.createElement('h3');
+    heading.textContent = title;
+    heading.style.margin = '0';
+    section.appendChild(heading);
+    
+    const content = document.createElement('div');
+    content.className = 'section-content';
+    section.appendChild(content);
+  }
   
   return section;
 }
