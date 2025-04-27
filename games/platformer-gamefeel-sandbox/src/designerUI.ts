@@ -1,4 +1,4 @@
-import { saveCurrentConfig, loadNamedConfig, getAllSavedConfigs, deleteNamedConfig } from './configStorage';
+import { saveCurrentConfig, loadNamedConfig, getAllSavedConfigs, deleteNamedConfig, getCurrentConfig } from './configStorage';
 import { PlayerParameters } from './player';
 import { CameraParameters } from './camera';
 
@@ -40,27 +40,57 @@ export function setupDesignerUI(
   const playerSliders: ParameterSlider[] = [
     createSlider('Gravity', () => playerParameters.gravity, v => { 
       playerParameters.gravity = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 2000, 10, 'Strength of gravity affecting the player'),
     createSlider('Jump Strength', () => playerParameters.jumpStrength, v => { 
       playerParameters.jumpStrength = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, -1000, 0, 10, 'Initial upward velocity when jumping'),
     createSlider('Move Speed', () => playerParameters.moveSpeed, v => { 
       playerParameters.moveSpeed = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 500, 5, 'Horizontal movement speed'),
     createSlider('Coyote Time (ms)', () => playerParameters.coyoteTimeMs, v => { 
       playerParameters.coyoteTimeMs = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 500, 10, 'Time window after leaving a platform where you can still jump'),
     createSlider('Jump Buffer Time (ms)', () => playerParameters.jumpBufferTimeMs, v => { 
       playerParameters.jumpBufferTimeMs = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 500, 10, 'Time window before landing where jump input is remembered'),
     createSlider('Jump Gravity Multiplier', () => playerParameters.jumpGravityMultiplier, v => { 
       playerParameters.jumpGravityMultiplier = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 1, 0.05, 'Gravity multiplier while jumping (lower = floatier jumps)')
   ];
 
@@ -68,43 +98,93 @@ export function setupDesignerUI(
   const cameraSliders: ParameterSlider[] = [
     createSlider('Camera Lerp X', () => cameraParameters.lerpX, v => { 
       cameraParameters.lerpX = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 1, 0.01, 'Horizontal camera smoothing (0 = instant, 1 = no movement)'),
     createSlider('Camera Lerp Y', () => cameraParameters.lerpY, v => { 
       cameraParameters.lerpY = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 1, 0.01, 'Vertical camera smoothing (0 = instant, 1 = no movement)'),
     createSlider('Deadzone Width', () => cameraParameters.deadzoneWidth, v => { 
       cameraParameters.deadzoneWidth = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 400, 10, 'Horizontal distance before camera follows player'),
     createSlider('Deadzone Height', () => cameraParameters.deadzoneHeight, v => { 
       cameraParameters.deadzoneHeight = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 400, 10, 'Vertical distance before camera follows player'),
     createSlider('Lookahead X', () => cameraParameters.lookaheadX, v => { 
       cameraParameters.lookaheadX = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 300, 10, 'Horizontal camera lookahead distance'),
     createSlider('Lookahead Y', () => cameraParameters.lookaheadY, v => { 
       cameraParameters.lookaheadY = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 300, 10, 'Vertical camera lookahead distance'),
     createSlider('Lookahead Smoothing X', () => cameraParameters.lookaheadSmoothingX, v => { 
       cameraParameters.lookaheadSmoothingX = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 1, 0.01, 'Horizontal lookahead smoothing'),
     createSlider('Lookahead Smoothing Y', () => cameraParameters.lookaheadSmoothingY, v => { 
       cameraParameters.lookaheadSmoothingY = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 1, 0.01, 'Vertical lookahead smoothing'),
     createSlider('Lookahead Threshold X', () => cameraParameters.lookaheadThresholdX, v => { 
       cameraParameters.lookaheadThresholdX = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 20, 1, 'Minimum horizontal speed to trigger lookahead'),
     createSlider('Lookahead Threshold Y', () => cameraParameters.lookaheadThresholdY, v => { 
       cameraParameters.lookaheadThresholdY = v;
-      saveCurrentConfig({ name: '', player: playerParameters, camera: cameraParameters });
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
     }, 0, 20, 1, 'Minimum vertical speed to trigger lookahead')
   ];
 
@@ -113,9 +193,20 @@ export function setupDesignerUI(
   cameraSliders.forEach(slider => cameraSection.querySelector('.section-content')!.appendChild(createSliderElement(slider)));
 
   // Add config management UI
-  // Save config button
+  // Current config display
+  const currentConfigDisplay = document.createElement('div');
+  currentConfigDisplay.style.cssText = 'margin-bottom: 10px; color: #aaa; font-size: 0.9em;';
+  function updateCurrentConfigDisplay() {
+    const currentConfig = getCurrentConfig();
+    currentConfigDisplay.textContent = currentConfig?.name 
+      ? `Current config: ${currentConfig.name}`
+      : 'Current config: (unsaved)';
+  }
+  updateCurrentConfigDisplay();
+  
+  // Save new config button
   const saveButton = document.createElement('button');
-  saveButton.textContent = 'Save Current Config';
+  saveButton.textContent = 'Save New Config';
   saveButton.onclick = () => {
     const name = prompt('Enter a name for this config:');
     if (name) {
@@ -124,8 +215,8 @@ export function setupDesignerUI(
         player: { ...playerParameters }, 
         camera: { ...cameraParameters } 
       });
-      alert('Config saved!');
       updateConfigList();
+      updateCurrentConfigDisplay();
     }
   };
   
@@ -153,6 +244,7 @@ export function setupDesignerUI(
             updateSliderValue(slider.label, slider.getValue());
           }
         });
+        updateCurrentConfigDisplay();
       }
     }
   };
@@ -164,6 +256,7 @@ export function setupDesignerUI(
     if (name && confirm(`Are you sure you want to delete "${name}"?`)) {
       deleteNamedConfig(name);
       updateConfigList();
+      updateCurrentConfigDisplay();
     }
   };
   
@@ -186,6 +279,7 @@ export function setupDesignerUI(
   // Initial update of config list
   updateConfigList();
   
+  configSection.querySelector('.section-content')!.appendChild(currentConfigDisplay);
   configSection.querySelector('.section-content')!.appendChild(saveButton);
   configSection.querySelector('.section-content')!.appendChild(loadContainer);
 
