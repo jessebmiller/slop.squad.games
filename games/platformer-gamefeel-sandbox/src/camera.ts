@@ -3,7 +3,6 @@ import Phaser from 'phaser';
 export type CameraState = {
   lookaheadOffsetX: number;
   lookaheadOffsetY: number;
-  deadzoneGraphics: Phaser.GameObjects.Graphics | null;
 };
 
 export type CameraParameters = {
@@ -17,18 +16,12 @@ export type CameraParameters = {
   lookaheadSmoothingY: number;
   lookaheadThresholdX: number;
   lookaheadThresholdY: number;
-  showDeadzoneDebug: boolean;
 };
 
 export const createCameraState = (scene: Phaser.Scene): CameraState => {
-  const deadzoneGraphics = scene.add.graphics();
-  deadzoneGraphics.setDepth(1000);
-  deadzoneGraphics.setVisible(false);
-
   return {
     lookaheadOffsetX: 0,
     lookaheadOffsetY: 0,
-    deadzoneGraphics,
   };
 };
 
@@ -83,25 +76,6 @@ export const updateCamera = (
   // update deadzone if it's changed
   if (parameters.deadzoneWidth !== camera.deadzone?.width || parameters.deadzoneHeight !== camera.deadzone?.height) {
     camera.setDeadzone(parameters.deadzoneWidth, parameters.deadzoneHeight);
-  }
-  camera.setRoundPixels(true);
-
-  // Update deadzone debug overlay
-  if (state.deadzoneGraphics) {
-    state.deadzoneGraphics.clear();
-    if (parameters.showDeadzoneDebug && camera.deadzone) {
-      const dz = camera.deadzone;
-      state.deadzoneGraphics.lineStyle(2, 0xff00ff, 1);
-      state.deadzoneGraphics.strokeRect(
-        camera.scrollX * 0.5 + (dz.x * 0.5),
-        camera.scrollY * 0.5 + (dz.y * 0.5),
-        dz.width,
-        dz.height
-      );
-      state.deadzoneGraphics.setVisible(true);
-    } else {
-      state.deadzoneGraphics.setVisible(false);
-    }
   }
 
   return {

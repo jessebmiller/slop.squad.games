@@ -17,7 +17,6 @@ export function setupDesignerUI(
     cameraLookaheadSmoothingY,
     cameraLookaheadThresholdX,
     cameraLookaheadThresholdY,
-    showDeadzoneDebug,
   }: {
     gravity: () => number;
     jumpStrength: () => number;
@@ -35,7 +34,6 @@ export function setupDesignerUI(
     cameraLookaheadSmoothingY: () => number;
     cameraLookaheadThresholdX: () => number;
     cameraLookaheadThresholdY: () => number;
-    showDeadzoneDebug: () => boolean;
   },
   setters: {
     setGravity: (v: number) => void;
@@ -54,7 +52,6 @@ export function setupDesignerUI(
     setCameraLookaheadSmoothingY: (v: number) => void;
     setCameraLookaheadThresholdX: (v: number) => void;
     setCameraLookaheadThresholdY: (v: number) => void;
-    setShowDeadzoneDebug: (v: boolean) => void;
   }
 ) {
   const gravitySlider = document.getElementById('gravity') as HTMLInputElement;
@@ -203,13 +200,4 @@ export function setupDesignerUI(
     setters.setCameraLookaheadThresholdY(parseFloat(cameraLookaheadThresholdYSlider.value));
     cameraLookaheadThresholdYValue!.textContent = cameraLookaheadThresholdYSlider.value;
   };
-
-  // Checkbox for deadzone debug overlay
-  const showDeadzoneDebugCheckbox = document.getElementById('showDeadzoneDebug') as HTMLInputElement;
-  if (showDeadzoneDebugCheckbox) {
-    showDeadzoneDebugCheckbox.checked = showDeadzoneDebug();
-    showDeadzoneDebugCheckbox.onchange = () => {
-      setters.setShowDeadzoneDebug(showDeadzoneDebugCheckbox.checked);
-    };
-  }
 } 

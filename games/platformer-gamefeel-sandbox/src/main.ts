@@ -53,7 +53,6 @@ const cameraParameters: CameraParameters = {
   lookaheadSmoothingY: 0.15,
   lookaheadThresholdX: 5,
   lookaheadThresholdY: 5,
-  showDeadzoneDebug: false,
 };
 
 function preload(this: Phaser.Scene) {
@@ -124,7 +123,6 @@ function create(this: Phaser.Scene) {
     cameraLookaheadSmoothingY: () => cameraParameters.lookaheadSmoothingY,
     cameraLookaheadThresholdX: () => cameraParameters.lookaheadThresholdX,
     cameraLookaheadThresholdY: () => cameraParameters.lookaheadThresholdY,
-    showDeadzoneDebug: () => cameraParameters.showDeadzoneDebug,
   }, {
     setGravity: v => { playerParameters.gravity = v; },
     setJumpStrength: v => { playerParameters.jumpStrength = v; },
@@ -142,7 +140,6 @@ function create(this: Phaser.Scene) {
     setCameraLookaheadSmoothingY: v => { cameraParameters.lookaheadSmoothingY = v; },
     setCameraLookaheadThresholdX: v => { cameraParameters.lookaheadThresholdX = v; },
     setCameraLookaheadThresholdY: v => { cameraParameters.lookaheadThresholdY = v; },
-    setShowDeadzoneDebug: v => { cameraParameters.showDeadzoneDebug = v; },
   });
 }
 
