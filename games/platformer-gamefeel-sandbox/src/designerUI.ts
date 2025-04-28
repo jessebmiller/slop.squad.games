@@ -44,15 +44,25 @@ export function setupDesignerUI(
   const materialDisplay = document.createElement('div');
   materialDisplay.style.cssText = 'color: #fff; margin: 10px 0;';
   materialDisplay.textContent = 'Current Material: None';
+  const gravityDisplay = document.createElement('div');
+  gravityDisplay.style.cssText = 'color: #fff; margin: 10px 0;';
+  gravityDisplay.textContent = 'Gravity: 0';    
   debugContent.appendChild(materialDisplay);
+  debugContent.appendChild(gravityDisplay);
 
-  // Function to update debug info
-  function updateDebugInfo(material: string) {
+  // Function to update material debug info
+  function updateMaterialDebug(material: string) {
     materialDisplay.textContent = `Current Material: ${material}`;
   }
 
-  // Expose debug function to window
-  (window as any).updateDebugInfo = updateDebugInfo;
+  // Function to update gravity debug info
+  function updateGravityDebug(gravity: number) {
+    gravityDisplay.textContent = `Gravity: ${gravity.toFixed(2)}`;
+  }
+
+  // Expose debug functions to window
+  (window as any).updateMaterialDebug = updateMaterialDebug;
+  (window as any).updateGravityDebug = updateGravityDebug;
 
   // Player parameters
   const playerSliders: ParameterSlider[] = [
@@ -322,20 +332,6 @@ export function setupDesignerUI(
         }
       });
     }, 0, 2000, 50, 'Time between ground pounds'),
-    createSlider('Variable Jump Height', () => playerParameters.variableJumpHeightMultiplier, v => { 
-      playerParameters.variableJumpHeightMultiplier = v;
-      const currentConfig = getCurrentConfig();
-      saveCurrentConfig({ 
-        name: currentConfig?.name || '', 
-        player: playerParameters, 
-        camera: cameraParameters,
-        materials: {
-          default: { ...DEFAULT_MATERIAL },
-          ice: { ...ICE_MATERIAL },
-          air: { ...AIR_MATERIAL }
-        }
-      });
-    }, 0, 1, 0.05, 'How much holding jump affects jump height (0 = no effect)'),
   ];
 
   // Camera parameters

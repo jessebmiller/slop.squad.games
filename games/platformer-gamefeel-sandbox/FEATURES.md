@@ -105,12 +105,20 @@ The Platformer Game Feel Sandbox is a web-based tool designed to help game desig
 
 ### 7. Input Support
 - **Supported Input Methods**:
-  - Keyboard (A/D for movement, SPACE for jump)
+  - Keyboard (A/D for movement, SPACE for jump, SHIFT for dash, S for ground pound)
   - Gamepad (Xbox-style controllers)
 - **Features**:
   - Automatic input detection
-  - Basic input mapping
-  - Gamepad connection handling
+  - Input buffering system
+  - Frame-accurate input handling
+  - Action input buffering (jump, dash, ground pound)
+  - Continuous movement input
+  - State tracking for buffered inputs
+- **Benefits**:
+  - More responsive controls
+  - Forgiving input timing
+  - Smoother action transitions
+  - Professional-grade feel
 
 ### 8. User Interface
 - **Components**:

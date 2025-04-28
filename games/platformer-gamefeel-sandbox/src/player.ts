@@ -5,7 +5,8 @@ import { Material, DEFAULT_MATERIAL, AIR_MATERIAL } from './materials';
 // Add global debug function
 declare global {
   interface Window {
-    updateDebugInfo: (material: string) => void;
+    updateMaterialDebug: (material: string) => void;
+    updateGravityDebug: (gravity: number) => void;
   }
 }
 
@@ -53,7 +54,6 @@ export type PlayerParameters = {
   groundPoundSpeed: number;
   groundPoundBounceStrength: number;
   groundPoundCooldownMs: number;
-  variableJumpHeightMultiplier: number;
 };
 
 export type PlayerInput = {
@@ -62,6 +62,9 @@ export type PlayerInput = {
   jump: boolean;
   dash: boolean;
   groundPound: boolean;
+  jumpBuffered: boolean;
+  dashBuffered: boolean;
+  groundPoundBuffered: boolean;
 };
 
 export const createPlayer = (
@@ -144,8 +147,8 @@ export const updatePlayer = (
           const distance = Math.abs(playerBottom - platformTop);
           if (distance < 10) {
             state.currentMaterial = platform.getData('material');
-            if (window.updateDebugInfo && state.currentMaterial) {
-              window.updateDebugInfo(state.currentMaterial.type);
+            if (window.updateMaterialDebug && state.currentMaterial) {
+              window.updateMaterialDebug(state.currentMaterial.type);
             }
             break;
           }
@@ -153,8 +156,8 @@ export const updatePlayer = (
       }
     } else {
       state.currentMaterial = null;
-      if (window.updateDebugInfo) {
-        window.updateDebugInfo('None');
+      if (window.updateMaterialDebug) {
+        window.updateMaterialDebug('None');
       }
     }
   }
@@ -177,7 +180,7 @@ export const updatePlayer = (
 
   // Jump buffering logic
   let jumpBufferTimer = state.jumpBufferTimer;
-  if (input.jump && !state.prevJumpPressed) {
+  if (input.jumpBuffered) {
     jumpBufferTimer = parameters.jumpBufferTimeMs;
   } else if (jumpBufferTimer > 0) {
     jumpBufferTimer -= delta;
@@ -195,7 +198,7 @@ export const updatePlayer = (
   }
 
   // Wall jump logic
-  if (state.wallSliding && input.jump && !state.prevJumpPressed) {
+  if (state.wallSliding && input.jumpBuffered) {
     state.wallJumpDirection = (state.sprite.body as Phaser.Physics.Arcade.Body).touching.left ? 1 : -1;
     state.wallJumpTimer = parameters.wallJumpTimeMs;
     if (state.sprite.body) {
@@ -206,7 +209,7 @@ export const updatePlayer = (
   }
 
   // Double jump logic
-  if (!onGround && !state.wallSliding && input.jump && !state.prevJumpPressed && state.doubleJumpAvailable) {
+  if (!onGround && !state.wallSliding && input.jumpBuffered && state.doubleJumpAvailable) {
     state.doubleJumpAvailable = false;
     if (state.sprite.body) {
       const body = state.sprite.body as Phaser.Physics.Arcade.Body;
@@ -215,7 +218,7 @@ export const updatePlayer = (
   }
 
   // Dash logic
-  if (input.dash && state.dashAvailable && state.dashTimer <= 0) {
+  if (input.dashBuffered && state.dashAvailable && state.dashTimer <= 0) {
     state.dashAvailable = false;
     state.dashTimer = parameters.dashDurationMs;
     state.dashDirection = input.right ? 1 : (input.left ? -1 : 0);
@@ -237,7 +240,7 @@ export const updatePlayer = (
   }
 
   // Ground pound logic
-  if (input.groundPound && state.groundPoundAvailable && state.groundPoundTimer <= 0) {
+  if (input.groundPoundBuffered && state.groundPoundAvailable && state.groundPoundTimer <= 0) {
     state.groundPoundAvailable = false;
     state.groundPoundTimer = parameters.groundPoundCooldownMs;
     if (state.sprite.body) {
@@ -322,12 +325,18 @@ export const updatePlayer = (
   if (state.sprite.body) {
     const body = state.sprite.body as Phaser.Physics.Arcade.Body;
     const rising = body.velocity.y < 0;
-    if (rising && state.prevJumpPressed) {
-      body.setAccelerationY(parameters.gravity * (parameters.jumpGravityMultiplier - 1));
+    
+    // Set base gravity
+    scene.physics.world.gravity.y = parameters.gravity;
+    
+    // If rising and holding jump, apply reduced gravity
+    if (rising && input.jump) {
       scene.physics.world.gravity.y = parameters.gravity * parameters.jumpGravityMultiplier;
-    } else {
-      body.setAccelerationY(0);
-      scene.physics.world.gravity.y = parameters.gravity;
+    }
+
+    // Update gravity debug info
+    if (window.updateGravityDebug) {
+      window.updateGravityDebug(scene.physics.world.gravity.y);
     }
   }
 

@@ -61,7 +61,6 @@ const playerParameters: PlayerParameters = {
   groundPoundSpeed: 800,
   groundPoundBounceStrength: -300,
   groundPoundCooldownMs: 1000,
-  variableJumpHeightMultiplier: 0.5,
 };
 
 // Camera parameters (designer adjustable)
