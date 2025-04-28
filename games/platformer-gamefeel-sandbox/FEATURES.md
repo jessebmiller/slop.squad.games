@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Platformer Game Feel Sandbox is a web-based tool designed to help game designers and developers tune platformer game feel parameters in real-time. It provides an interface for adjusting player movement and camera behaviors, with the ability to save and load different configurations.
+The Platformer Game Feel Sandbox is a web-based tool designed to help game designers and developers tune platformer game feel parameters in real-time. It provides an interface for adjusting player movement, camera behaviors, and material properties, with the ability to save and load different configurations.
 
 ## Core Features
 
@@ -12,6 +12,7 @@ The Platformer Game Feel Sandbox is a web-based tool designed to help game desig
   - Slider-based controls for precise tuning
   - Real-time feedback of changes
   - Organized parameter groups
+  - Material property controls
 - **Benefits**:
   - Immediate testing of changes
   - Quick iteration on game feel
@@ -25,12 +26,30 @@ The Platformer Game Feel Sandbox is a web-based tool designed to help game desig
   - Coyote Time (0-500ms)
   - Jump Buffer Time (0-500ms)
   - Jump Gravity Multiplier (0-1)
+  - Scale (1-500%)
+  - Terminal Velocity (100-1000)
 - **Features**:
   - Independent control of each parameter
   - Real-time physics updates
   - Advanced jump mechanics (coyote time, jump buffering)
+  - Material-based movement modifiers
 
-### 3. Camera Behavior Tuning
+### 3. Material System
+- **Material Types**:
+  - Default Material
+  - Ice Material
+  - Air Material
+- **Material Properties**:
+  - Acceleration (0-4)
+  - Deceleration (0-4)
+  - Friction (0-1)
+- **Features**:
+  - Real-time material switching
+  - Custom material properties
+  - Smooth transitions
+  - Material-specific movement modifiers
+
+### 4. Camera Behavior Tuning
 - **Parameters**:
   - Lerp X/Y (0-1)
   - Deadzone Width/Height (0-400px)
@@ -42,7 +61,20 @@ The Platformer Game Feel Sandbox is a web-based tool designed to help game desig
   - Velocity-based lookahead
   - Smooth transitions
 
-### 4. Configuration Management
+### 5. Animation System
+- **Animation States**:
+  - Idle
+  - Run
+  - Jump
+  - Fall
+  - Land
+- **Features**:
+  - Smooth state transitions
+  - Frame-based animations
+  - Automatic state management
+  - Real-time animation preview
+
+### 6. Configuration Management
 - **Features**:
   - Save current settings as named configs
   - Load existing configurations
@@ -52,8 +84,9 @@ The Platformer Game Feel Sandbox is a web-based tool designed to help game desig
   - Uses browser's localStorage
   - Automatic config saving
   - Persistent between sessions
+  - Material configuration support
 
-### 5. Input Support
+### 7. Input Support
 - **Supported Input Methods**:
   - Keyboard (A/D for movement, SPACE for jump)
   - Gamepad (Xbox-style controllers)
@@ -62,11 +95,12 @@ The Platformer Game Feel Sandbox is a web-based tool designed to help game desig
   - Basic input mapping
   - Gamepad connection handling
 
-### 6. User Interface
+### 8. User Interface
 - **Components**:
   - Parameter sections
   - Real-time value displays
   - Save/Load interface
+  - Material controls
 - **Design**:
   - Clean layout
   - Organized controls
@@ -90,6 +124,7 @@ The Platformer Game Feel Sandbox is a web-based tool designed to help game desig
 - 60 FPS target
 - Minimal input lag
 - Smooth parameter updates
+- Efficient material transitions
 
 ## Implementation Details
 
@@ -98,6 +133,13 @@ The Platformer Game Feel Sandbox is a web-based tool designed to help game desig
 - Custom gravity implementation
 - Collision detection
 - Advanced jump mechanics
+- Material-based movement modifiers
+
+### Material System
+- Surface type detection
+- Material property management
+- Movement modification
+- Smooth transitions
 
 ### Camera System
 - Phaser camera follow
@@ -105,8 +147,15 @@ The Platformer Game Feel Sandbox is a web-based tool designed to help game desig
 - Deadzone support
 - Smooth lerp transitions
 
+### Animation System
+- State-based animations
+- Frame-based system
+- Smooth transitions
+- Automatic state management
+
 ### Storage System
 - localStorage-based
 - JSON serialization
 - Automatic state persistence
-- Named configurations 
+- Named configurations
+- Material configuration support 

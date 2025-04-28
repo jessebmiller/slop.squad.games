@@ -84,6 +84,51 @@ This guide explains how to use the Platformer Game Feel Sandbox to tune your pla
   - Standard jumps: 0.6-0.7
   - Snappy jumps: 0.8-0.9
 
+### Scale
+- **Description**: Player character size as a percentage
+- **Range**: 1-500%
+- **Default**: 100%
+- **Effects**:
+  - Higher values make the player larger
+  - Lower values make the player smaller
+- **Implementation**: Sets sprite scale
+- **Recommendations**:
+  - Large character: 150-200%
+  - Standard size: 100%
+  - Small character: 50-75%
+
+### Terminal Velocity
+- **Description**: Maximum falling speed
+- **Range**: 100-1000
+- **Default**: 500
+- **Effects**:
+  - Higher values allow faster falling
+  - Lower values cap falling speed
+- **Implementation**: Limits vertical velocity when falling
+- **Recommendations**:
+  - Fast falling: 800-1000
+  - Standard falling: 500-700
+  - Slow falling: 200-400
+
+## Material Parameters
+
+The game features different materials that affect player movement. Each material has its own set of parameters:
+
+### Default Material
+- **Acceleration**: 0-4 (How quickly the player speeds up)
+- **Deceleration**: 0-4 (How quickly the player slows down)
+- **Friction**: 0-1 (How much friction the material has, 1 = no friction)
+
+### Ice Material
+- **Acceleration**: 0-4 (How quickly the player speeds up on ice)
+- **Deceleration**: 0-4 (How quickly the player slows down on ice)
+- **Friction**: 0-1 (How much friction ice has, 1 = no friction)
+
+### Air Material
+- **Acceleration**: 0-4 (How quickly the player speeds up in air)
+- **Deceleration**: 0-4 (How quickly the player slows down in air)
+- **Friction**: 0-1 (How much friction air has, 1 = no friction)
+
 ## Camera Parameters
 
 ### Lerp X/Y
@@ -151,27 +196,46 @@ This guide explains how to use the Platformer Game Feel Sandbox to tune your pla
   - Standard: 5-7
   - Low threshold: 2-4
 
+## Input Methods
+
+The game supports both keyboard and gamepad input:
+
+### Keyboard Controls
+- **Left/Right**: A/D keys
+- **Jump**: Space bar
+
+### Gamepad Controls
+- **Left/Right**: Left stick horizontal axis
+- **Jump**: A button (Xbox) / Cross button (PlayStation)
+
 ## Best Practices
 
 1. **Start with Player Movement**
    - Tune gravity and jump strength first
    - Adjust move speed to match your desired pace
    - Fine-tune coyote time and jump buffer for feel
+   - Set appropriate terminal velocity for your game style
 
-2. **Then Tune Camera**
+2. **Then Tune Materials**
+   - Configure default material for base movement feel
+   - Adjust ice material for slippery surfaces
+   - Fine-tune air movement for platforming feel
+
+3. **Then Tune Camera**
    - Set deadzone size based on level design
    - Adjust lerp for desired camera smoothness
    - Configure lookahead for player comfort
 
-3. **Save Configurations**
+4. **Save Configurations**
    - Save different configs for different game sections
    - Create presets for different playstyles
    - Use descriptive names for easy reference
 
-4. **Test Extensively**
+5. **Test Extensively**
    - Test with both keyboard and gamepad
    - Try different movement patterns
    - Consider edge cases and extreme movements
+   - Test on different materials
 
 ## Common Use Cases
 
@@ -181,6 +245,8 @@ This guide explains how to use the Platformer Game Feel Sandbox to tune your pla
 - Fast movement (300-400)
 - Snappy camera (0.05-0.1 lerp)
 - Moderate lookahead (100-150)
+- High terminal velocity (800-1000)
+- Responsive materials (high acceleration, low friction)
 
 ### Precision Platformer
 - Standard gravity (800-1000)
@@ -188,10 +254,14 @@ This guide explains how to use the Platformer Game Feel Sandbox to tune your pla
 - Controlled movement (200-300)
 - Smooth camera (0.15-0.2 lerp)
 - Low lookahead (50-100)
+- Moderate terminal velocity (500-700)
+- High friction materials
 
 ### Exploration Platformer
 - Low gravity (500-800)
 - High jumps (-600 to -800)
 - Moderate movement (200-300)
 - Very smooth camera (0.2-0.25 lerp)
-- High lookahead (150-200) 
+- High lookahead (150-200)
+- Low terminal velocity (200-400)
+- Floaty materials (low friction, high air control) 

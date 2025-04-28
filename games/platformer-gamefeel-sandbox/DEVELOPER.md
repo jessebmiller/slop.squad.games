@@ -221,15 +221,3 @@ src/
 3. Run development server
 4. Make changes
 5. Submit pull request
-
-### Code Review Process
-1. Automated tests
-2. Manual review
-3. Performance check
-4. Documentation update
-
-### Release Process
-1. Version bump
-2. Changelog update
-3. Documentation review
-4. Deployment 
