@@ -43,13 +43,25 @@ const playerParameters: PlayerParameters = {
   jumpBufferTimeMs: 150,
   jumpGravityMultiplier: 0.6,
   scale: 1.0,
-  // New momentum parameters
   acceleration: 0.5,
   deceleration: 0.7,
   airAcceleration: 0.2,
   airDeceleration: 0.3,
   maxSpeed: 300,
   terminalVelocity: 500,
+  // New movement parameters
+  wallSlideSpeed: 100,
+  wallJumpStrength: -400,
+  wallJumpTimeMs: 200,
+  wallJumpPushStrength: 300,
+  doubleJumpStrength: -450,
+  dashSpeed: 600,
+  dashDurationMs: 150,
+  dashCooldownMs: 500,
+  groundPoundSpeed: 800,
+  groundPoundBounceStrength: -300,
+  groundPoundCooldownMs: 1000,
+  variableJumpHeightMultiplier: 0.5,
 };
 
 // Camera parameters (designer adjustable)

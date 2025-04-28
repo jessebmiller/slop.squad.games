@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { PlayerState, PlayerInput } from '../player';
 
 // Animation state definitions
-export type AnimationState = 'idle' | 'run' | 'jump' | 'fall' | 'land';
+export type AnimationState = 'idle' | 'run' | 'jump' | 'fall' | 'land' | 'wallSlide' | 'dash' | 'groundPound';
 
 // Frame configuration for each animation state
 export interface AnimationConfig {
@@ -55,6 +55,33 @@ export const ANIMATION_CONFIGS: Record<AnimationState, AnimationConfig> = {
     frameRate: 12,
     repeat: 0,
   },
+  wallSlide: {
+    key: 'player-wallSlide',
+    textureKey: 'jump',
+    frames: 1,
+    frameRate: 1,
+    repeat: -1,
+    startFrame: 4,
+    endFrame: 4,
+  },
+  dash: {
+    key: 'player-dash',
+    textureKey: 'sprint',
+    frames: 1,
+    frameRate: 1,
+    repeat: -1,
+    startFrame: 4,
+    endFrame: 4,
+  },
+  groundPound: {
+    key: 'player-groundPound',
+    textureKey: 'jump',
+    frames: 1,
+    frameRate: 1,
+    repeat: -1,
+    startFrame: 4,
+    endFrame: 4,
+  },
 };
 
 // Helper function to create animations
@@ -92,7 +119,22 @@ export function getAnimationForState(
   const isOnGround = body.touching.down;
   const isActivelyMoving = (input.left || input.right) && isMoving;
 
-  // Landing takes priority
+  // Ground pound takes priority
+  if (state.groundPoundTimer > 0) {
+    return 'groundPound';
+  }
+
+  // Dash takes next priority
+  if (state.dashTimer > 0) {
+    return 'dash';
+  }
+
+  // Wall slide takes next priority
+  if (state.wallSliding) {
+    return 'wallSlide';
+  }
+
+  // Landing takes next priority
   if (isOnGround && !wasOnGround) {
     return 'land';
   }

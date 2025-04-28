@@ -28,11 +28,28 @@ The Platformer Game Feel Sandbox is a web-based tool designed to help game desig
   - Jump Gravity Multiplier (0-1)
   - Scale (1-500%)
   - Terminal Velocity (100-1000)
+  - Wall Slide Speed (0-200)
+  - Wall Jump Strength (0-1000)
+  - Wall Jump Time (0-500ms)
+  - Wall Jump Push (0-500)
+  - Double Jump Strength (0-1000)
+  - Dash Speed (0-1000)
+  - Dash Duration (0-500ms)
+  - Dash Cooldown (0-2000ms)
+  - Ground Pound Speed (0-1000)
+  - Ground Pound Bounce (0-500)
+  - Ground Pound Cooldown (0-2000ms)
+  - Variable Jump Height (0-1)
 - **Features**:
   - Independent control of each parameter
   - Real-time physics updates
   - Advanced jump mechanics (coyote time, jump buffering)
   - Material-based movement modifiers
+  - Wall slide and wall jump mechanics
+  - Double jump system
+  - Dash movement
+  - Ground pound with bounce
+  - Variable jump height control
 
 ### 3. Material System
 - **Material Types**:

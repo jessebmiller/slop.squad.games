@@ -17,6 +17,15 @@ export type PlayerState = {
   jumpBufferTimer: number;
   currentAnimation: AnimationState;
   currentMaterial: Material | null;
+  wallSliding: boolean;
+  wallJumpDirection: number;
+  wallJumpTimer: number;
+  doubleJumpAvailable: boolean;
+  dashAvailable: boolean;
+  dashTimer: number;
+  dashDirection: number;
+  groundPoundAvailable: boolean;
+  groundPoundTimer: number;
 };
 
 export type PlayerParameters = {
@@ -33,12 +42,26 @@ export type PlayerParameters = {
   deceleration: number;
   airAcceleration: number;
   airDeceleration: number;
+  wallSlideSpeed: number;
+  wallJumpStrength: number;
+  wallJumpTimeMs: number;
+  wallJumpPushStrength: number;
+  doubleJumpStrength: number;
+  dashSpeed: number;
+  dashDurationMs: number;
+  dashCooldownMs: number;
+  groundPoundSpeed: number;
+  groundPoundBounceStrength: number;
+  groundPoundCooldownMs: number;
+  variableJumpHeightMultiplier: number;
 };
 
 export type PlayerInput = {
   left: boolean;
   right: boolean;
   jump: boolean;
+  dash: boolean;
+  groundPound: boolean;
 };
 
 export const createPlayer = (
@@ -80,6 +103,15 @@ export const createPlayer = (
     jumpBufferTimer: 0,
     currentAnimation: 'idle',
     currentMaterial: null,
+    wallSliding: false,
+    wallJumpDirection: 0,
+    wallJumpTimer: 0,
+    doubleJumpAvailable: true,
+    dashAvailable: true,
+    dashTimer: 0,
+    dashDirection: 0,
+    groundPoundAvailable: true,
+    groundPoundTimer: 0,
   };
 };
 
@@ -92,31 +124,26 @@ export const updatePlayer = (
 ): PlayerState => {
   state.sprite.setScale(parameters.scale / 100);
   const onGround = !!(state.sprite.body && (state.sprite.body as Phaser.Physics.Arcade.Body).touching.down);
+  const onWall = !!(state.sprite.body && 
+    ((state.sprite.body as Phaser.Physics.Arcade.Body).touching.left || 
+     (state.sprite.body as Phaser.Physics.Arcade.Body).touching.right));
 
   // Update current material based on what we're touching
   if (state.sprite.body) {
     const body = state.sprite.body as Phaser.Physics.Arcade.Body;
-    console.log('Touching down:', body.touching.down);
     if (body.touching.down) {
-      // Check if we're touching any platform with a material
       const platforms = scene.children.list.filter(
         child => child.getData('material') && child !== state.sprite
       ) as Phaser.GameObjects.GameObject[];
       
-      console.log('Found platforms with materials:', platforms.length);
-      
       for (const platform of platforms) {
         const platformBody = platform.body as Phaser.Physics.Arcade.Body;
-        console.log('Checking platform:', platform.getData('material')?.type);
         if (platformBody && body.touching.down) {
-          // Get the actual positions from the physics bodies
           const playerBottom = body.bottom;
           const platformTop = platformBody.top;
           const distance = Math.abs(playerBottom - platformTop);
-          console.log('Distance to platform:', distance);
-          if (distance < 10) { // Increased threshold slightly
+          if (distance < 10) {
             state.currentMaterial = platform.getData('material');
-            console.log('Setting material to:', state.currentMaterial?.type);
             if (window.updateDebugInfo && state.currentMaterial) {
               window.updateDebugInfo(state.currentMaterial.type);
             }
@@ -130,6 +157,14 @@ export const updatePlayer = (
         window.updateDebugInfo('None');
       }
     }
+  }
+
+  // Reset movement abilities when landing
+  if (onGround && !state.wasOnGround) {
+    state.doubleJumpAvailable = true;
+    state.dashAvailable = true;
+    state.groundPoundAvailable = true;
+    state.wallSliding = false;
   }
 
   // Coyote time logic
@@ -148,8 +183,76 @@ export const updatePlayer = (
     jumpBufferTimer -= delta;
   }
 
-  // Movement with momentum
-  if (state.sprite.body) {
+  // Wall slide logic
+  if (onWall && !onGround && (input.left || input.right)) {
+    state.wallSliding = true;
+    if (state.sprite.body) {
+      const body = state.sprite.body as Phaser.Physics.Arcade.Body;
+      body.setVelocityY(parameters.wallSlideSpeed);
+    }
+  } else {
+    state.wallSliding = false;
+  }
+
+  // Wall jump logic
+  if (state.wallSliding && input.jump && !state.prevJumpPressed) {
+    state.wallJumpDirection = (state.sprite.body as Phaser.Physics.Arcade.Body).touching.left ? 1 : -1;
+    state.wallJumpTimer = parameters.wallJumpTimeMs;
+    if (state.sprite.body) {
+      const body = state.sprite.body as Phaser.Physics.Arcade.Body;
+      body.setVelocityY(parameters.wallJumpStrength);
+      body.setVelocityX(parameters.wallJumpPushStrength * state.wallJumpDirection);
+    }
+  }
+
+  // Double jump logic
+  if (!onGround && !state.wallSliding && input.jump && !state.prevJumpPressed && state.doubleJumpAvailable) {
+    state.doubleJumpAvailable = false;
+    if (state.sprite.body) {
+      const body = state.sprite.body as Phaser.Physics.Arcade.Body;
+      body.setVelocityY(parameters.doubleJumpStrength);
+    }
+  }
+
+  // Dash logic
+  if (input.dash && state.dashAvailable && state.dashTimer <= 0) {
+    state.dashAvailable = false;
+    state.dashTimer = parameters.dashDurationMs;
+    state.dashDirection = input.right ? 1 : (input.left ? -1 : 0);
+    if (state.dashDirection === 0) {
+      state.dashDirection = state.sprite.flipX ? -1 : 1;
+    }
+  }
+
+  // Update dash timer and apply dash velocity
+  if (state.dashTimer > 0) {
+    state.dashTimer -= delta;
+    if (state.sprite.body) {
+      const body = state.sprite.body as Phaser.Physics.Arcade.Body;
+      body.setVelocityX(parameters.dashSpeed * state.dashDirection);
+      body.setVelocityY(0);
+    }
+  } else if (!state.dashAvailable && !onGround) {
+    state.dashTimer = -parameters.dashCooldownMs;
+  }
+
+  // Ground pound logic
+  if (input.groundPound && state.groundPoundAvailable && state.groundPoundTimer <= 0) {
+    state.groundPoundAvailable = false;
+    state.groundPoundTimer = parameters.groundPoundCooldownMs;
+    if (state.sprite.body) {
+      const body = state.sprite.body as Phaser.Physics.Arcade.Body;
+      body.setVelocityY(parameters.groundPoundSpeed);
+    }
+  }
+
+  // Update ground pound timer
+  if (state.groundPoundTimer > 0) {
+    state.groundPoundTimer -= delta;
+  }
+
+  // Movement with momentum (only if not dashing)
+  if (state.sprite.body && state.dashTimer <= 0) {
     const body = state.sprite.body as Phaser.Physics.Arcade.Body;
     const currentVelocityX = body.velocity.x;
     
@@ -171,10 +274,8 @@ export const updatePlayer = (
       const currentAcceleration = onGround 
         ? (state.currentMaterial?.acceleration ?? DEFAULT_MATERIAL.acceleration)
         : AIR_MATERIAL.acceleration;
-      // Scale acceleration by delta and material properties
       const accelerationAmount = currentAcceleration * delta;
       newVelocityX += direction * accelerationAmount;
-      // Don't overshoot the target
       if (Math.sign(newVelocityX) === Math.sign(targetVelocityX) && 
           Math.abs(newVelocityX) > Math.abs(targetVelocityX)) {
         newVelocityX = targetVelocityX;
@@ -185,10 +286,8 @@ export const updatePlayer = (
       const currentDeceleration = onGround
         ? (state.currentMaterial?.deceleration ?? DEFAULT_MATERIAL.deceleration)
         : AIR_MATERIAL.deceleration;
-      // Scale deceleration by delta and material properties
       const decelerationAmount = currentDeceleration * delta;
       newVelocityX += direction * decelerationAmount;
-      // Stop if we've changed direction or are very slow
       if (Math.sign(newVelocityX) !== Math.sign(currentVelocityX) || 
           Math.abs(newVelocityX) < 0.1) {
         newVelocityX = 0;
@@ -219,7 +318,7 @@ export const updatePlayer = (
     jumpBufferTimer = 0;
   }
 
-  // Gravity tweak: apply jump gravity multiplier only while rising and jump is held
+  // Variable jump height: apply jump gravity multiplier only while rising and jump is held
   if (state.sprite.body) {
     const body = state.sprite.body as Phaser.Physics.Arcade.Body;
     const rising = body.velocity.y < 0;

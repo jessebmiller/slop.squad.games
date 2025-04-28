@@ -46,17 +46,33 @@ src/
   - Movement physics
   - Collision handling
   - Material interaction
+  - Wall slide and wall jump mechanics
+  - Double jump system
+  - Dash mechanics
+  - Ground pound system
+  - Variable jump height
 - **Key Functions**:
   - `createPlayer()`: Player initialization
   - `updatePlayer()`: Movement updates
   - Physics calculations
   - Material handling
+  - Wall slide and wall jump logic
+  - Double jump handling
+  - Dash state management
+  - Ground pound mechanics
+  - Variable jump height control
 - **Implementation**:
   - Uses Phaser's arcade physics
   - Implements coyote time
   - Handles jump buffering
   - Custom gravity during jumps
   - Material-based movement modifiers
+  - Wall slide with configurable speed
+  - Wall jump with directional push
+  - Double jump with separate strength
+  - Dash with cooldown and duration
+  - Ground pound with bounce mechanics
+  - Variable jump height based on input duration
 
 ### 3. Camera System (`camera.ts`)
 - **Components**:

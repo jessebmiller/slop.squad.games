@@ -168,6 +168,174 @@ export function setupDesignerUI(
         }
       });
     }, 100, 1000, 10, 'Maximum falling speed (higher = faster falling)'),
+    createSlider('Wall Slide Speed', () => playerParameters.wallSlideSpeed, v => { 
+      playerParameters.wallSlideSpeed = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 200, 5, 'Speed at which the player slides down walls'),
+    createSlider('Wall Jump Strength', () => -playerParameters.wallJumpStrength, v => { 
+      playerParameters.wallJumpStrength = -v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 1000, 10, 'Upward velocity when wall jumping'),
+    createSlider('Wall Jump Time (ms)', () => playerParameters.wallJumpTimeMs, v => { 
+      playerParameters.wallJumpTimeMs = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 500, 10, 'Duration of wall jump control lock'),
+    createSlider('Wall Jump Push', () => playerParameters.wallJumpPushStrength, v => { 
+      playerParameters.wallJumpPushStrength = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 500, 10, 'Horizontal push force when wall jumping'),
+    createSlider('Double Jump Strength', () => -playerParameters.doubleJumpStrength, v => { 
+      playerParameters.doubleJumpStrength = -v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 1000, 10, 'Upward velocity when double jumping'),
+    createSlider('Dash Speed', () => playerParameters.dashSpeed, v => { 
+      playerParameters.dashSpeed = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 1000, 10, 'Speed of the dash move'),
+    createSlider('Dash Duration (ms)', () => playerParameters.dashDurationMs, v => { 
+      playerParameters.dashDurationMs = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 500, 10, 'How long the dash lasts'),
+    createSlider('Dash Cooldown (ms)', () => playerParameters.dashCooldownMs, v => { 
+      playerParameters.dashCooldownMs = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 2000, 50, 'Time between dashes'),
+    createSlider('Ground Pound Speed', () => playerParameters.groundPoundSpeed, v => { 
+      playerParameters.groundPoundSpeed = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 1000, 10, 'Downward velocity when ground pounding'),
+    createSlider('Ground Pound Bounce', () => -playerParameters.groundPoundBounceStrength, v => { 
+      playerParameters.groundPoundBounceStrength = -v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 500, 10, 'Upward velocity after ground pound'),
+    createSlider('Ground Pound Cooldown (ms)', () => playerParameters.groundPoundCooldownMs, v => { 
+      playerParameters.groundPoundCooldownMs = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 2000, 50, 'Time between ground pounds'),
+    createSlider('Variable Jump Height', () => playerParameters.variableJumpHeightMultiplier, v => { 
+      playerParameters.variableJumpHeightMultiplier = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 1, 0.05, 'How much holding jump affects jump height (0 = no effect)'),
   ];
 
   // Camera parameters
