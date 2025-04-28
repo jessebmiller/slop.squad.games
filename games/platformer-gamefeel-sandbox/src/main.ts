@@ -110,7 +110,8 @@ function create(this: Phaser.Scene) {
   this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
 
   // Create player
-  playerState = createPlayer(this, 100, worldHeight - 100);
+  const spawnHeight = 100 + (playerParameters.scale - 100); // Add extra height based on scale above 100
+  playerState = createPlayer(this, 100, worldHeight - spawnHeight);
 
   // Create ground (spans the whole world)
   const ground = this.add.rectangle(worldWidth / 2, worldHeight - 20, worldWidth, 40, DEFAULT_MATERIAL.color);
