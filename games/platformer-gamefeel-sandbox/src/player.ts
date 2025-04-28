@@ -18,6 +18,12 @@ export type PlayerParameters = {
   jumpBufferTimeMs: number;
   jumpGravityMultiplier: number;
   scale: number;
+  acceleration: number;
+  deceleration: number;
+  airAcceleration: number;
+  airDeceleration: number;
+  maxSpeed: number;
+  terminalVelocity: number;
 };
 
 export type PlayerInput = {
@@ -43,7 +49,10 @@ export const createPlayer = (
     
     // Set the body size to match the character (18x44)
     body.setSize(14, 44);
-    body.setOffset(55, 46)
+    body.setOffset(57, 46);
+    
+    // Initialize velocity to 0
+    body.setVelocity(0, 0);
   }
   
   sprite.setCollideWorldBounds(true);
@@ -90,15 +99,49 @@ export const updatePlayer = (
     jumpBufferTimer -= delta;
   }
 
-  // Movement
-  if (input.left) {
-    state.sprite.setVelocityX(-parameters.moveSpeed);
-    state.sprite.setFlipX(true);
-  } else if (input.right) {
-    state.sprite.setVelocityX(parameters.moveSpeed);
-    state.sprite.setFlipX(false);
-  } else {
-    state.sprite.setVelocityX(0);
+  // Movement with momentum
+  if (state.sprite.body) {
+    const body = state.sprite.body as Phaser.Physics.Arcade.Body;
+    const currentVelocityX = body.velocity.x;
+    
+    // Calculate target velocity based on input
+    let targetVelocityX = 0;
+    if (input.left) {
+      targetVelocityX = -parameters.moveSpeed;
+      state.sprite.setFlipX(true);
+    } else if (input.right) {
+      targetVelocityX = parameters.moveSpeed;
+      state.sprite.setFlipX(false);
+    }
+    
+    // Simple momentum: gradually move towards target velocity
+    let newVelocityX = currentVelocityX;
+    if (targetVelocityX !== 0) {
+      // Moving: accelerate towards target
+      const direction = Math.sign(targetVelocityX - currentVelocityX);
+      newVelocityX += direction * parameters.acceleration * delta;
+      // Don't overshoot the target
+      if (Math.sign(newVelocityX) === Math.sign(targetVelocityX) && 
+          Math.abs(newVelocityX) > Math.abs(targetVelocityX)) {
+        newVelocityX = targetVelocityX;
+      }
+    } else {
+      // Stopping: decelerate
+      const direction = -Math.sign(currentVelocityX);
+      newVelocityX += direction * parameters.deceleration * delta;
+      // Stop if we've changed direction or are very slow
+      if (Math.sign(newVelocityX) !== Math.sign(currentVelocityX) || 
+          Math.abs(newVelocityX) < 0.1) {
+        newVelocityX = 0;
+      }
+    }
+    
+    body.setVelocityX(newVelocityX);
+    
+    // Apply terminal velocity for falling
+    if (body.velocity.y > parameters.terminalVelocity) {
+      body.setVelocityY(parameters.terminalVelocity);
+    }
   }
 
   // Jump logic with coyote time and jump buffer

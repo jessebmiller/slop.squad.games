@@ -100,7 +100,35 @@ export function setupDesignerUI(
         player: playerParameters, 
         camera: cameraParameters 
       });
-    }, 1, 500, 1, 'Scale of the player character in percent')
+    }, 1, 500, 1, 'Scale of the player character in percent'),
+    // New momentum parameters
+    createSlider('Acceleration', () => playerParameters.acceleration, v => { 
+      playerParameters.acceleration = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
+    }, 0, 4, 0.05, 'How quickly the player accelerates to max speed (higher = faster acceleration)'),
+    createSlider('Deceleration', () => playerParameters.deceleration, v => { 
+      playerParameters.deceleration = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
+    }, 0, 4, 0.05, 'How quickly the player slows down when stopping (higher = faster stopping)'),
+    createSlider('Terminal Velocity', () => playerParameters.terminalVelocity, v => { 
+      playerParameters.terminalVelocity = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
+    }, 100, 1000, 10, 'Maximum falling speed (higher = faster falling)')
   ];
 
   // Camera parameters

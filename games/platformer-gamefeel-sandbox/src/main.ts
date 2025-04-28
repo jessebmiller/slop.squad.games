@@ -42,6 +42,13 @@ const playerParameters: PlayerParameters = {
   jumpBufferTimeMs: 150,
   jumpGravityMultiplier: 0.6,
   scale: 1.0,
+  // New momentum parameters
+  acceleration: 0.5,
+  deceleration: 0.7,
+  airAcceleration: 0.2,
+  airDeceleration: 0.3,
+  maxSpeed: 300,
+  terminalVelocity: 500,
 };
 
 // Camera parameters (designer adjustable)
@@ -97,7 +104,7 @@ function create(this: Phaser.Scene) {
   this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
 
   // Create player
-  playerState = createPlayer(this, 100, worldHeight - 100, playerParameters);
+  playerState = createPlayer(this, 100, worldHeight - 100);
 
   // Create ground (spans the whole world)
   const ground = this.add.rectangle(worldWidth / 2, worldHeight - 20, worldWidth, 40, 0x888888);
