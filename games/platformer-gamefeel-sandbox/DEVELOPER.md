@@ -14,7 +14,10 @@ src/
 ├── input.ts             # Input handling
 ├── configStorage.ts     # Configuration persistence
 ├── configUI.ts          # Configuration UI components
-└── designerUI.ts        # Main designer interface
+├── designerUI.ts        # Main designer interface
+├── materials.ts         # Material system definitions
+└── player/
+    └── animations.ts    # Player animation system
 ```
 
 ## Key Components
@@ -25,6 +28,7 @@ src/
   - Scene management
   - Main update loop
   - Component coordination
+  - Material system setup
 - **Key Functions**:
   - `preload()`: Asset loading
   - `create()`: Game setup
@@ -33,6 +37,7 @@ src/
   - Uses Phaser's scene system
   - Coordinates player and camera updates
   - Handles gamepad connection
+  - Manages material system
 
 ### 2. Player System (`player.ts`)
 - **Components**:
@@ -40,15 +45,18 @@ src/
   - `PlayerParameters`: Tunable parameters
   - Movement physics
   - Collision handling
+  - Material interaction
 - **Key Functions**:
   - `createPlayer()`: Player initialization
   - `updatePlayer()`: Movement updates
   - Physics calculations
+  - Material handling
 - **Implementation**:
   - Uses Phaser's arcade physics
   - Implements coyote time
   - Handles jump buffering
   - Custom gravity during jumps
+  - Material-based movement modifiers
 
 ### 3. Camera System (`camera.ts`)
 - **Components**:
@@ -79,7 +87,33 @@ src/
   - Xbox-style gamepad support
   - Basic input mapping
 
-### 5. Configuration Storage (`configStorage.ts`)
+### 5. Material System (`materials.ts`)
+- **Components**:
+  - Material definitions
+  - Material properties
+  - Material switching
+- **Key Functions**:
+  - Material property access
+  - Material state management
+- **Implementation**:
+  - Defines default, ice, and air materials
+  - Handles material transitions
+  - Manages material properties
+
+### 6. Animation System (`player/animations.ts`)
+- **Components**:
+  - Animation states
+  - Animation configurations
+  - State transitions
+- **Key Functions**:
+  - `createAnimations()`: Animation setup
+  - `getAnimationForState()`: State management
+- **Implementation**:
+  - Handles idle, run, jump, fall, and land animations
+  - Smooth state transitions
+  - Frame-based animation system
+
+### 7. Configuration Storage (`configStorage.ts`)
 - **Components**:
   - Local storage interface
   - Configuration serialization
@@ -93,12 +127,14 @@ src/
   - Uses browser's localStorage
   - JSON serialization
   - Named configuration support
+  - Material configuration storage
 
-### 6. UI Systems (`configUI.ts`, `designerUI.ts`)
+### 8. UI Systems (`configUI.ts`, `designerUI.ts`)
 - **Components**:
   - Parameter sliders
   - Configuration management
   - Real-time updates
+  - Material controls
 - **Key Functions**:
   - `setupDesignerUI()`: Main UI setup
   - `setupConfigUI()`: Config management UI
@@ -106,6 +142,7 @@ src/
   - DOM-based UI
   - Real-time parameter updates
   - Configuration management interface
+  - Material parameter controls
 
 ## Data Flow
 
@@ -119,7 +156,12 @@ src/
    UI Sliders -> designerUI.ts -> Parameter Objects -> Game Systems
    ```
 
-3. **Configuration Management**:
+3. **Material System**:
+   ```
+   Collision Detection -> Material System -> Player Movement Modifiers
+   ```
+
+4. **Configuration Management**:
    ```
    UI Actions -> configUI.ts -> configStorage.ts -> Local Storage
    ```
@@ -130,12 +172,20 @@ src/
 - Player and camera states are updated every frame
 - Parameters are stored in separate objects
 - Configuration changes trigger immediate updates
+- Material states are tracked per collision
 
 ### Physics Implementation
 - Uses Phaser's arcade physics
 - Custom gravity and movement calculations
 - Collision detection and response
 - Advanced jump mechanics with coyote time and buffering
+- Material-based movement modifiers
+
+### Material System
+- Defines different surface types
+- Handles material transitions
+- Modifies player movement
+- Supports custom material properties
 
 ### Camera System
 - Smooth lerp-based movement
@@ -149,25 +199,7 @@ src/
 - JSON serialization
 - Automatic state persistence
 - Named configurations
-
-## Development Guidelines
-
-### Code Style
-- TypeScript strict mode
-- Consistent naming conventions
-- Modular component design
-- Clear documentation
-
-### Testing
-- Manual testing of core systems
-- Performance monitoring
-- Input validation
-
-### Performance Considerations
-- Optimize update loops
-- Minimize DOM operations
-- Efficient state updates
-- Memory management
+- Material configuration storage
 
 ## Extension Points
 
@@ -189,29 +221,11 @@ src/
 3. Implement mapping
 4. Update documentation
 
-## Troubleshooting
-
-### Common Issues
-1. **Input Lag**
-   - Check update loop timing
-   - Verify input processing
-   - Monitor frame rate
-
-2. **Camera Jitter**
-   - Adjust lerp values
-   - Check deadzone settings
-   - Verify update order
-
-3. **Storage Issues**
-   - Check browser support
-   - Verify serialization
-   - Monitor storage limits
-
-### Debug Tools
-- Browser console logging
-- Performance monitoring
-- Input state display
-- Parameter value logging
+### New Materials
+1. Define material properties
+2. Add material type
+3. Implement material effects
+4. Update UI controls
 
 ## Contributing
 
