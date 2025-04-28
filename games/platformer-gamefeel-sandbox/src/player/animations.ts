@@ -2,7 +2,7 @@ import Phaser from 'phaser';
 import { PlayerState, PlayerInput } from '../player';
 
 // Animation state definitions
-export type AnimationState = 'idle' | 'walk' | 'sprint' | 'jump' | 'land';
+export type AnimationState = 'idle' | 'run' | 'jump' | 'fall' | 'land';
 
 // Frame configuration for each animation state
 export interface AnimationConfig {
@@ -12,6 +12,8 @@ export interface AnimationConfig {
   frameRate: number;
   repeat: number;
   yoyo?: boolean;
+  startFrame?: number;
+  endFrame?: number;
 }
 
 // Animation configurations
@@ -23,15 +25,8 @@ export const ANIMATION_CONFIGS: Record<AnimationState, AnimationConfig> = {
     frameRate: 8,
     repeat: -1,
   },
-  walk: {
-    key: 'player-walk',
-    textureKey: 'walk',
-    frames: 8,
-    frameRate: 12,
-    repeat: -1,
-  },
-  sprint: {
-    key: 'player-sprint',
+  run: {
+    key: 'player-run',
     textureKey: 'sprint',
     frames: 8,
     frameRate: 15,
@@ -43,6 +38,15 @@ export const ANIMATION_CONFIGS: Record<AnimationState, AnimationConfig> = {
     frames: 4,
     frameRate: 10,
     repeat: 0,
+  },
+  fall: {
+    key: 'player-fall',
+    textureKey: 'jump',
+    frames: 1,
+    frameRate: 1,
+    repeat: -1,
+    startFrame: 4,
+    endFrame: 4,
   },
   land: {
     key: 'player-land',
@@ -59,8 +63,8 @@ export function createAnimations(scene: Phaser.Scene): void {
   (Object.keys(ANIMATION_CONFIGS) as AnimationState[]).forEach((state) => {
     const config = ANIMATION_CONFIGS[state];
     const frames = scene.anims.generateFrameNumbers(config.textureKey, {
-      start: 0,
-      end: config.frames - 1,
+      start: config.startFrame ?? 0,
+      end: config.endFrame ?? config.frames - 1,
     });
 
     scene.anims.create({
@@ -83,10 +87,9 @@ export function getAnimationForState(
   
   const body = state.sprite.body as Phaser.Physics.Arcade.Body;
   const isMoving = Math.abs(body.velocity.x) > 0.1;
-  const isFalling = body.velocity.y > 0;
-  const isJumping = body.velocity.y < 0;
+  const isFalling = body.velocity.y > 0 && !body.touching.down;
+  const isJumping = body.velocity.y < 0 && !body.touching.down;
   const isOnGround = body.touching.down;
-  const isSprinting = isMoving && input.jump; // Using jump button for sprint
 
   // Landing takes priority
   if (isOnGround && !wasOnGround) {
@@ -98,14 +101,14 @@ export function getAnimationForState(
     return 'jump';
   }
 
-  // Sprinting
-  if (isSprinting) {
-    return 'sprint';
+  // Falling state
+  if (isFalling) {
+    return 'fall';
   }
 
-  // Walking
-  if (isMoving) {
-    return 'walk';
+  // Running on ground
+  if (isMoving && isOnGround) {
+    return 'run';
   }
 
   // Default to idle
