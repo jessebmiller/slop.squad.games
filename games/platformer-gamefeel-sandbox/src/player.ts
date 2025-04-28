@@ -1,5 +1,13 @@
 import Phaser from 'phaser';
 import { AnimationState, createAnimations, getAnimationForState, ANIMATION_CONFIGS } from './player/animations';
+import { Material, DEFAULT_MATERIAL, AIR_MATERIAL } from './materials';
+
+// Add global debug function
+declare global {
+  interface Window {
+    updateDebugInfo: (material: string) => void;
+  }
+}
 
 export type PlayerState = {
   sprite: Phaser.Physics.Arcade.Sprite;
@@ -8,6 +16,7 @@ export type PlayerState = {
   prevJumpPressed: boolean;
   jumpBufferTimer: number;
   currentAnimation: AnimationState;
+  currentMaterial: Material | null;
 };
 
 export type PlayerParameters = {
@@ -18,12 +27,12 @@ export type PlayerParameters = {
   jumpBufferTimeMs: number;
   jumpGravityMultiplier: number;
   scale: number;
+  maxSpeed: number;
+  terminalVelocity: number;
   acceleration: number;
   deceleration: number;
   airAcceleration: number;
   airDeceleration: number;
-  maxSpeed: number;
-  terminalVelocity: number;
 };
 
 export type PlayerInput = {
@@ -70,6 +79,7 @@ export const createPlayer = (
     prevJumpPressed: false,
     jumpBufferTimer: 0,
     currentAnimation: 'idle',
+    currentMaterial: null,
   };
 };
 
@@ -82,6 +92,45 @@ export const updatePlayer = (
 ): PlayerState => {
   state.sprite.setScale(parameters.scale / 100);
   const onGround = !!(state.sprite.body && (state.sprite.body as Phaser.Physics.Arcade.Body).touching.down);
+
+  // Update current material based on what we're touching
+  if (state.sprite.body) {
+    const body = state.sprite.body as Phaser.Physics.Arcade.Body;
+    console.log('Touching down:', body.touching.down);
+    if (body.touching.down) {
+      // Check if we're touching any platform with a material
+      const platforms = scene.children.list.filter(
+        child => child.getData('material') && child !== state.sprite
+      ) as Phaser.GameObjects.GameObject[];
+      
+      console.log('Found platforms with materials:', platforms.length);
+      
+      for (const platform of platforms) {
+        const platformBody = platform.body as Phaser.Physics.Arcade.Body;
+        console.log('Checking platform:', platform.getData('material')?.type);
+        if (platformBody && body.touching.down) {
+          // Get the actual positions from the physics bodies
+          const playerBottom = body.bottom;
+          const platformTop = platformBody.top;
+          const distance = Math.abs(playerBottom - platformTop);
+          console.log('Distance to platform:', distance);
+          if (distance < 10) { // Increased threshold slightly
+            state.currentMaterial = platform.getData('material');
+            console.log('Setting material to:', state.currentMaterial?.type);
+            if (window.updateDebugInfo && state.currentMaterial) {
+              window.updateDebugInfo(state.currentMaterial.type);
+            }
+            break;
+          }
+        }
+      }
+    } else {
+      state.currentMaterial = null;
+      if (window.updateDebugInfo) {
+        window.updateDebugInfo('None');
+      }
+    }
+  }
 
   // Coyote time logic
   let coyoteTimer = state.coyoteTimer;
@@ -119,7 +168,12 @@ export const updatePlayer = (
     if (targetVelocityX !== 0) {
       // Moving: accelerate towards target
       const direction = Math.sign(targetVelocityX - currentVelocityX);
-      newVelocityX += direction * parameters.acceleration * delta;
+      const currentAcceleration = onGround 
+        ? (state.currentMaterial?.acceleration ?? DEFAULT_MATERIAL.acceleration)
+        : AIR_MATERIAL.acceleration;
+      // Scale acceleration by delta and material properties
+      const accelerationAmount = currentAcceleration * delta;
+      newVelocityX += direction * accelerationAmount;
       // Don't overshoot the target
       if (Math.sign(newVelocityX) === Math.sign(targetVelocityX) && 
           Math.abs(newVelocityX) > Math.abs(targetVelocityX)) {
@@ -128,11 +182,25 @@ export const updatePlayer = (
     } else {
       // Stopping: decelerate
       const direction = -Math.sign(currentVelocityX);
-      newVelocityX += direction * parameters.deceleration * delta;
+      const currentDeceleration = onGround
+        ? (state.currentMaterial?.deceleration ?? DEFAULT_MATERIAL.deceleration)
+        : AIR_MATERIAL.deceleration;
+      // Scale deceleration by delta and material properties
+      const decelerationAmount = currentDeceleration * delta;
+      newVelocityX += direction * decelerationAmount;
       // Stop if we've changed direction or are very slow
       if (Math.sign(newVelocityX) !== Math.sign(currentVelocityX) || 
           Math.abs(newVelocityX) < 0.1) {
         newVelocityX = 0;
+      }
+    }
+    
+    // Apply friction only when there's no input
+    if (targetVelocityX === 0) {
+      if (onGround && state.currentMaterial) {
+        newVelocityX *= state.currentMaterial.friction;
+      } else if (!onGround) {
+        newVelocityX *= AIR_MATERIAL.friction;
       }
     }
     

@@ -1,10 +1,16 @@
 import { PlayerParameters } from './player';
 import { CameraParameters } from './camera';
+import { Material } from './materials';
 
 export interface GameConfig {
   name: string;
   player: PlayerParameters;
   camera: CameraParameters;
+  materials: {
+    default: Material;
+    ice: Material;
+    air: Material;
+  };
 }
 
 const STORAGE_KEY = 'gamefeel_configs';

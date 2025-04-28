@@ -5,6 +5,7 @@ import { getInputState } from './input';
 import { createCameraState, setupCamera, updateCamera, CameraState, CameraParameters } from './camera';
 import { saveCurrentConfig, getCurrentConfig, loadNamedConfig, getAllSavedConfigs, GameConfig } from './configStorage';
 import { setupConfigUI } from './configUI';
+import { DEFAULT_MATERIAL, ICE_MATERIAL, AIR_MATERIAL } from './materials';
 
 const config: Phaser.Types.Core.GameConfig = {
   type: Phaser.AUTO,
@@ -70,6 +71,11 @@ const savedConfig = getCurrentConfig();
 if (savedConfig) {
   Object.assign(playerParameters, savedConfig.player);
   Object.assign(cameraParameters, savedConfig.camera);
+  if (savedConfig.materials) {
+    Object.assign(DEFAULT_MATERIAL, savedConfig.materials.default);
+    Object.assign(ICE_MATERIAL, savedConfig.materials.ice);
+    Object.assign(AIR_MATERIAL, savedConfig.materials.air);
+  }
 }
 
 function preload(this: Phaser.Scene) {
@@ -107,24 +113,27 @@ function create(this: Phaser.Scene) {
   playerState = createPlayer(this, 100, worldHeight - 100);
 
   // Create ground (spans the whole world)
-  const ground = this.add.rectangle(worldWidth / 2, worldHeight - 20, worldWidth, 40, 0x888888);
+  const ground = this.add.rectangle(worldWidth / 2, worldHeight - 20, worldWidth, 40, DEFAULT_MATERIAL.color);
   this.physics.add.existing(ground, true);
+  ground.setData('material', DEFAULT_MATERIAL);
 
   // Additional platforms scattered throughout the level
   const platforms = [
-    this.add.rectangle(300, worldHeight - 200, 120, 20, 0x8888ff),
-    this.add.rectangle(600, worldHeight - 350, 120, 20, 0x88ff88),
-    this.add.rectangle(900, worldHeight - 500, 120, 20, 0xff8888),
-    this.add.rectangle(1200, worldHeight - 300, 120, 20, 0xffff88),
-    this.add.rectangle(1500, worldHeight - 600, 120, 20, 0x88ffff),
-    this.add.rectangle(1800, worldHeight - 400, 120, 20, 0xff88ff),
-    this.add.rectangle(2100, worldHeight - 250, 120, 20, 0x88ff44),
-    this.add.rectangle(400, worldHeight - 800, 120, 20, 0xff4444),
-    this.add.rectangle(1000, worldHeight - 900, 120, 20, 0x44ff44),
-    this.add.rectangle(2000, worldHeight - 1000, 120, 20, 0x4444ff),
+    this.add.rectangle(300, worldHeight - 200, 120, 20, DEFAULT_MATERIAL.color),
+    this.add.rectangle(600, worldHeight - 350, 120, 20, DEFAULT_MATERIAL.color),
+    this.add.rectangle(900, worldHeight - 500, 120, 20, DEFAULT_MATERIAL.color),
+    this.add.rectangle(1200, worldHeight - 300, 120, 20, ICE_MATERIAL.color),
+    this.add.rectangle(1500, worldHeight - 600, 120, 20, DEFAULT_MATERIAL.color),
+    this.add.rectangle(1800, worldHeight - 400, 120, 20, DEFAULT_MATERIAL.color),
+    this.add.rectangle(2100, worldHeight - 250, 120, 20, DEFAULT_MATERIAL.color),
+    this.add.rectangle(400, worldHeight - 800, 120, 20, DEFAULT_MATERIAL.color),
+    this.add.rectangle(1000, worldHeight - 900, 120, 20, DEFAULT_MATERIAL.color),
+    this.add.rectangle(2000, worldHeight - 1000, 120, 20, DEFAULT_MATERIAL.color),
   ];
-  platforms.forEach(platform => {
+  platforms.forEach((platform, index) => {
     this.physics.add.existing(platform, true);
+    // Set the fourth platform to ice material, others to default
+    platform.setData('material', index === 3 ? ICE_MATERIAL : DEFAULT_MATERIAL);
   });
 
   // Add all colliders

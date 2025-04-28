@@ -1,6 +1,7 @@
 import { saveCurrentConfig, loadNamedConfig, getAllSavedConfigs, deleteNamedConfig, getCurrentConfig } from './configStorage';
 import { PlayerParameters } from './player';
 import { CameraParameters } from './camera';
+import { DEFAULT_MATERIAL, ICE_MATERIAL, AIR_MATERIAL } from './materials';
 
 interface ParameterSlider {
   label: string;
@@ -35,6 +36,23 @@ export function setupDesignerUI(
   const playerSection = createSection('Player Movement');
   const cameraSection = createSection('Camera Settings');
   const configSection = createSection('Config Management', false);
+  const materialsSection = createSection('Materials');
+  const debugSection = createSection('Debug Info', false);
+
+  // Add debug info
+  const debugContent = debugSection.querySelector('.section-content')!;
+  const materialDisplay = document.createElement('div');
+  materialDisplay.style.cssText = 'color: #fff; margin: 10px 0;';
+  materialDisplay.textContent = 'Current Material: None';
+  debugContent.appendChild(materialDisplay);
+
+  // Function to update debug info
+  function updateDebugInfo(material: string) {
+    materialDisplay.textContent = `Current Material: ${material}`;
+  }
+
+  // Expose debug function to window
+  (window as any).updateDebugInfo = updateDebugInfo;
 
   // Player parameters
   const playerSliders: ParameterSlider[] = [
@@ -44,7 +62,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 2000, 10, 'Strength of gravity affecting the player'),
     createSlider('Jump Strength', () => -playerParameters.jumpStrength, v => { 
@@ -53,7 +76,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 1000, 10, 'Initial upward velocity when jumping (higher = stronger jump)'),
     createSlider('Jump Gravity Multiplier', () => playerParameters.jumpGravityMultiplier, v => { 
@@ -62,7 +90,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 1, 0.05, 'Gravity multiplier while jumping (lower = floatier jumps)'),
     createSlider('Move Speed', () => playerParameters.moveSpeed, v => { 
@@ -71,7 +104,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 500, 5, 'Horizontal movement speed'),
     createSlider('Coyote Time (ms)', () => playerParameters.coyoteTimeMs, v => { 
@@ -80,7 +118,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 500, 10, 'Time window after leaving a platform where you can still jump'),
     createSlider('Jump Buffer Time (ms)', () => playerParameters.jumpBufferTimeMs, v => { 
@@ -89,7 +132,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 500, 10, 'Time window before landing where jump input is remembered'),
     createSlider('Scale', () => playerParameters.scale, v => { 
@@ -98,37 +146,28 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 1, 500, 1, 'Scale of the player character in percent'),
-    // New momentum parameters
-    createSlider('Acceleration', () => playerParameters.acceleration, v => { 
-      playerParameters.acceleration = v;
-      const currentConfig = getCurrentConfig();
-      saveCurrentConfig({ 
-        name: currentConfig?.name || '', 
-        player: playerParameters, 
-        camera: cameraParameters 
-      });
-    }, 0, 4, 0.05, 'How quickly the player accelerates to max speed (higher = faster acceleration)'),
-    createSlider('Deceleration', () => playerParameters.deceleration, v => { 
-      playerParameters.deceleration = v;
-      const currentConfig = getCurrentConfig();
-      saveCurrentConfig({ 
-        name: currentConfig?.name || '', 
-        player: playerParameters, 
-        camera: cameraParameters 
-      });
-    }, 0, 4, 0.05, 'How quickly the player slows down when stopping (higher = faster stopping)'),
     createSlider('Terminal Velocity', () => playerParameters.terminalVelocity, v => { 
       playerParameters.terminalVelocity = v;
       const currentConfig = getCurrentConfig();
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
-    }, 100, 1000, 10, 'Maximum falling speed (higher = faster falling)')
+    }, 100, 1000, 10, 'Maximum falling speed (higher = faster falling)'),
   ];
 
   // Camera parameters
@@ -139,7 +178,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 1, 0.01, 'Horizontal camera smoothing (0 = instant, 1 = no movement)'),
     createSlider('Camera Lerp Y', () => cameraParameters.lerpY, v => { 
@@ -148,7 +192,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 1, 0.01, 'Vertical camera smoothing (0 = instant, 1 = no movement)'),
     createSlider('Deadzone Width', () => cameraParameters.deadzoneWidth, v => { 
@@ -157,7 +206,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 400, 10, 'Horizontal distance before camera follows player'),
     createSlider('Deadzone Height', () => cameraParameters.deadzoneHeight, v => { 
@@ -166,7 +220,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 400, 10, 'Vertical distance before camera follows player'),
     createSlider('Lookahead X', () => cameraParameters.lookaheadX, v => { 
@@ -175,7 +234,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 300, 10, 'Horizontal camera lookahead distance'),
     createSlider('Lookahead Y', () => cameraParameters.lookaheadY, v => { 
@@ -184,7 +248,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 300, 10, 'Vertical camera lookahead distance'),
     createSlider('Lookahead Smoothing X', () => cameraParameters.lookaheadSmoothingX, v => { 
@@ -193,7 +262,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 1, 0.01, 'Horizontal lookahead smoothing'),
     createSlider('Lookahead Smoothing Y', () => cameraParameters.lookaheadSmoothingY, v => { 
@@ -202,7 +276,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 1, 0.01, 'Vertical lookahead smoothing'),
     createSlider('Lookahead Threshold X', () => cameraParameters.lookaheadThresholdX, v => { 
@@ -211,7 +290,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 20, 1, 'Minimum horizontal speed to trigger lookahead'),
     createSlider('Lookahead Threshold Y', () => cameraParameters.lookaheadThresholdY, v => { 
@@ -220,17 +304,158 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name: currentConfig?.name || '', 
         player: playerParameters, 
-        camera: cameraParameters 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
     }, 0, 20, 1, 'Minimum vertical speed to trigger lookahead')
+  ];
+
+  // Material parameters
+  const materialSliders: ParameterSlider[] = [
+    // Default Material
+    createSlider('Default Material - Acceleration', () => DEFAULT_MATERIAL.acceleration, v => { 
+      DEFAULT_MATERIAL.acceleration = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 4, 0.05, 'How quickly the player accelerates on default material'),
+    createSlider('Default Material - Deceleration', () => DEFAULT_MATERIAL.deceleration, v => { 
+      DEFAULT_MATERIAL.deceleration = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 4, 0.05, 'How quickly the player slows down on default material'),
+    createSlider('Default Material - Friction', () => DEFAULT_MATERIAL.friction, v => { 
+      DEFAULT_MATERIAL.friction = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 1, 0.05, 'How much friction the default material has (1 = no friction)'),
+    
+    // Ice Material
+    createSlider('Ice Material - Acceleration', () => ICE_MATERIAL.acceleration, v => { 
+      ICE_MATERIAL.acceleration = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 4, 0.05, 'How quickly the player accelerates on ice'),
+    createSlider('Ice Material - Deceleration', () => ICE_MATERIAL.deceleration, v => { 
+      ICE_MATERIAL.deceleration = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 4, 0.05, 'How quickly the player slows down on ice'),
+    createSlider('Ice Material - Friction', () => ICE_MATERIAL.friction, v => { 
+      ICE_MATERIAL.friction = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 1, 0.05, 'How much friction ice has (1 = no friction)'),
+
+    // Air Material
+    createSlider('Air - Acceleration', () => AIR_MATERIAL.acceleration, v => { 
+      AIR_MATERIAL.acceleration = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 4, 0.05, 'How quickly the player accelerates in the air'),
+    createSlider('Air - Deceleration', () => AIR_MATERIAL.deceleration, v => { 
+      AIR_MATERIAL.deceleration = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 4, 0.05, 'How quickly the player slows down in the air'),
+    createSlider('Air - Friction', () => AIR_MATERIAL.friction, v => { 
+      AIR_MATERIAL.friction = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters,
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
+      });
+    }, 0, 1, 0.05, 'How much friction the air has (1 = no friction)'),
   ];
 
   // Add sliders to their sections
   playerSliders.forEach(slider => playerSection.querySelector('.section-content')!.appendChild(createSliderElement(slider)));
   cameraSliders.forEach(slider => cameraSection.querySelector('.section-content')!.appendChild(createSliderElement(slider)));
+  materialSliders.forEach(slider => materialsSection.querySelector('.section-content')!.appendChild(createSliderElement(slider)));
 
   // Add config management UI
-  // Current config display
+  const configContent = configSection.querySelector('.section-content')!;
   const currentConfigDisplay = document.createElement('div');
   currentConfigDisplay.style.cssText = 'margin-bottom: 10px; color: #aaa; font-size: 0.9em;';
   function updateCurrentConfigDisplay() {
@@ -250,7 +475,12 @@ export function setupDesignerUI(
       saveCurrentConfig({ 
         name, 
         player: { ...playerParameters }, 
-        camera: { ...cameraParameters } 
+        camera: { ...cameraParameters },
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
       updateConfigList();
       updateCurrentConfigDisplay();
@@ -270,8 +500,13 @@ export function setupDesignerUI(
       if (config) {
         Object.assign(playerParameters, config.player);
         Object.assign(cameraParameters, config.camera);
+        if (config.materials) {
+          Object.assign(DEFAULT_MATERIAL, config.materials.default);
+          Object.assign(ICE_MATERIAL, config.materials.ice);
+          Object.assign(AIR_MATERIAL, config.materials.air);
+        }
         // Update all slider values
-        [...playerSliders, ...cameraSliders].forEach(slider => {
+        [...playerSliders, ...cameraSliders, ...materialSliders].forEach(slider => {
           const input = document.getElementById(`slider-${slider.label}`) as HTMLInputElement;
           if (input) {
             input.value = slider.getValue().toString();
@@ -312,14 +547,16 @@ export function setupDesignerUI(
   // Initial update of config list
   updateConfigList();
   
-  configSection.querySelector('.section-content')!.appendChild(currentConfigDisplay);
-  configSection.querySelector('.section-content')!.appendChild(saveButton);
-  configSection.querySelector('.section-content')!.appendChild(loadContainer);
+  configContent.appendChild(currentConfigDisplay);
+  configContent.appendChild(saveButton);
+  configContent.appendChild(loadContainer);
 
   // Add sections to container
   container.appendChild(playerSection);
   container.appendChild(cameraSection);
+  container.appendChild(materialsSection);
   container.appendChild(configSection);
+  container.appendChild(debugSection);
 
   // Add container to document
   document.body.appendChild(container);
@@ -424,8 +661,9 @@ function createSection(title: string, isCollapsible: boolean = true): HTMLElemen
     const isExpanded = localStorage.getItem(sectionKey) === 'true';
     content.style.cssText = `
       overflow: hidden;
-      transition: max-height 0.2s ease-out;
-      max-height: ${isExpanded ? '1000px' : '0px'};
+      transition: opacity 0.2s ease-out;
+      display: ${isExpanded ? 'block' : 'none'};
+      opacity: ${isExpanded ? '1' : '0'};
     `;
     toggle.style.transform = isExpanded ? 'rotate(0deg)' : 'rotate(-90deg)';
     
@@ -435,8 +673,9 @@ function createSection(title: string, isCollapsible: boolean = true): HTMLElemen
     section.appendChild(content);
     
     header.onclick = () => {
-      const isExpanded = content.style.maxHeight !== '0px';
-      content.style.maxHeight = isExpanded ? '0px' : '1000px';
+      const isExpanded = content.style.display !== 'none';
+      content.style.display = isExpanded ? 'none' : 'block';
+      content.style.opacity = isExpanded ? '0' : '1';
       toggle.style.transform = isExpanded ? 'rotate(-90deg)' : 'rotate(0deg)';
       // Save state to localStorage
       localStorage.setItem(sectionKey, (!isExpanded).toString());
