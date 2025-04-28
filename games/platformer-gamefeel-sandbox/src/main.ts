@@ -131,7 +131,17 @@ function create(this: Phaser.Scene) {
 
   // Additional platforms scattered throughout the level
   const platforms = [
-    this.add.rectangle(300, worldHeight - 200, 120, 20, DEFAULT_MATERIAL.color),
+    // Wall jump practice walls
+    this.add.rectangle(300, worldHeight - 200, 20, 200, DEFAULT_MATERIAL.color),
+    this.add.rectangle(500, worldHeight - 200, 20, 200, DEFAULT_MATERIAL.color),
+    // Small platforms for jumping between walls
+    this.add.rectangle(400, worldHeight - 300, 120, 20, DEFAULT_MATERIAL.color),
+    // Higher walls for advanced practice
+    this.add.rectangle(200, worldHeight - 400, 20, 200, DEFAULT_MATERIAL.color),
+    this.add.rectangle(600, worldHeight - 400, 20, 200, DEFAULT_MATERIAL.color),
+    // Final platform at the top
+    this.add.rectangle(400, worldHeight - 500, 120, 20, DEFAULT_MATERIAL.color),
+    // Original platforms
     this.add.rectangle(600, worldHeight - 350, 120, 20, DEFAULT_MATERIAL.color),
     this.add.rectangle(900, worldHeight - 500, 120, 20, DEFAULT_MATERIAL.color),
     this.add.rectangle(1200, worldHeight - 300, 120, 20, ICE_MATERIAL.color),
