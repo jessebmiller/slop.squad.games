@@ -90,6 +90,7 @@ export function getAnimationForState(
   const isFalling = body.velocity.y > 0 && !body.touching.down;
   const isJumping = body.velocity.y < 0 && !body.touching.down;
   const isOnGround = body.touching.down;
+  const isActivelyMoving = (input.left || input.right) && isMoving;
 
   // Landing takes priority
   if (isOnGround && !wasOnGround) {
@@ -106,8 +107,8 @@ export function getAnimationForState(
     return 'fall';
   }
 
-  // Running on ground
-  if (isMoving && isOnGround) {
+  // Running on ground only when actively moving
+  if (isActivelyMoving && isOnGround) {
     return 'run';
   }
 
