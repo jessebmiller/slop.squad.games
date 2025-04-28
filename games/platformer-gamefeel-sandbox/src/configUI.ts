@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { saveCurrentConfig, loadNamedConfig, getAllSavedConfigs, GameConfig } from './configStorage';
 import { PlayerParameters } from './player';
 import { CameraParameters } from './camera';
+import { DEFAULT_MATERIAL, ICE_MATERIAL, AIR_MATERIAL } from './materials';
 
 export function setupConfigUI(
   scene: Phaser.Scene,
@@ -22,7 +23,12 @@ export function setupConfigUI(
       saveCurrentConfig({ 
         name, 
         player: { ...playerParameters }, 
-        camera: { ...cameraParameters } 
+        camera: { ...cameraParameters },
+        materials: {
+          default: { ...DEFAULT_MATERIAL },
+          ice: { ...ICE_MATERIAL },
+          air: { ...AIR_MATERIAL }
+        }
       });
       alert('Config saved!');
     }
