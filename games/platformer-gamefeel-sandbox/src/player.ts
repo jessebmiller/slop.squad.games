@@ -17,6 +17,7 @@ export type PlayerParameters = {
   coyoteTimeMs: number;
   jumpBufferTimeMs: number;
   jumpGravityMultiplier: number;
+  scale: number;
 };
 
 export type PlayerInput = {
@@ -25,14 +26,30 @@ export type PlayerInput = {
   jump: boolean;
 };
 
-export const createPlayer = (scene: Phaser.Scene, x: number, y: number): PlayerState => {
-  // Create the sprite with the player texture
-  const sprite = scene.physics.add.sprite(x, y, 'player');
-  sprite.setDisplaySize(40, 60);
+export const createPlayer = (
+    scene: Phaser.Scene,
+    x: number,
+    y: number,
+): PlayerState => {
+  // Create the sprite with the idle texture
+  const sprite = scene.physics.add.sprite(x, y, 'idle');
+  
+  // Set display size to match sprite frame size
+  sprite.setDisplaySize(128, 128);
+  
+  // Adjust the physics body to match the actual character size (18x44)
+  if (sprite.body) {
+    const body = sprite.body as Phaser.Physics.Arcade.Body;
+    
+    // Set the body size to match the character (18x44)
+    body.setSize(14, 44);
+    body.setOffset(55, 46)
+  }
+  
   sprite.setCollideWorldBounds(true);
 
   // Create all animations
-  createAnimations(scene, 'player');
+  createAnimations(scene);
 
   // Start with idle animation
   sprite.play('player-idle');
@@ -54,6 +71,7 @@ export const updatePlayer = (
   input: PlayerInput,
   scene: Phaser.Scene
 ): PlayerState => {
+  state.sprite.setScale(parameters.scale / 100);
   const onGround = !!(state.sprite.body && (state.sprite.body as Phaser.Physics.Arcade.Body).touching.down);
 
   // Coyote time logic

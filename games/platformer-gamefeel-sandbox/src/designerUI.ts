@@ -91,7 +91,16 @@ export function setupDesignerUI(
         player: playerParameters, 
         camera: cameraParameters 
       });
-    }, 0, 500, 10, 'Time window before landing where jump input is remembered')
+    }, 0, 500, 10, 'Time window before landing where jump input is remembered'),
+    createSlider('Scale', () => playerParameters.scale, v => { 
+      playerParameters.scale = v;
+      const currentConfig = getCurrentConfig();
+      saveCurrentConfig({ 
+        name: currentConfig?.name || '', 
+        player: playerParameters, 
+        camera: cameraParameters 
+      });
+    }, 1, 500, 1, 'Scale of the player character in percent')
   ];
 
   // Camera parameters

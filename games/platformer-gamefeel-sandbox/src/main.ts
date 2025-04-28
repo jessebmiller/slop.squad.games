@@ -41,6 +41,7 @@ const playerParameters: PlayerParameters = {
   coyoteTimeMs: 120,
   jumpBufferTimeMs: 150,
   jumpGravityMultiplier: 0.6,
+  scale: 1.0,
 };
 
 // Camera parameters (designer adjustable)
@@ -65,13 +66,26 @@ if (savedConfig) {
 }
 
 function preload(this: Phaser.Scene) {
-  // Load player sprite sheet
-  // The sprite sheet should be 32x32 pixels per frame
-  // Total width: 32 * 18 frames = 576 pixels
-  // Total height: 32 pixels
-  this.load.spritesheet('player', 'assets/player/player.png', {
-    frameWidth: 32,
-    frameHeight: 32,
+  // Load player sprite sheets
+  this.load.spritesheet('idle', 'assets/player/Idle.png', {
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+  this.load.spritesheet('walk', 'assets/player/Walk.png', {
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+  this.load.spritesheet('sprint', 'assets/player/Sprint.png', {
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+  this.load.spritesheet('jump', 'assets/player/Jump.png', {
+    frameWidth: 128,
+    frameHeight: 128,
+  });
+  this.load.spritesheet('land', 'assets/player/Land on Ground.png', {
+    frameWidth: 128,
+    frameHeight: 128,
   });
 }
 
@@ -83,7 +97,7 @@ function create(this: Phaser.Scene) {
   this.cameras.main.setBounds(0, 0, worldWidth, worldHeight);
 
   // Create player
-  playerState = createPlayer(this, 100, worldHeight - 100);
+  playerState = createPlayer(this, 100, worldHeight - 100, playerParameters);
 
   // Create ground (spans the whole world)
   const ground = this.add.rectangle(worldWidth / 2, worldHeight - 20, worldWidth, 40, 0x888888);
