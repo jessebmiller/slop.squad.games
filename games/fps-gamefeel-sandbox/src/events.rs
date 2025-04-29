@@ -6,6 +6,7 @@ pub enum GameEvent {
     Fire,
     Move(Vec2),  // x: left/right, y: forward/back
     Sprint(bool),
+    Pause(bool),
     // Add more game events as needed
 }
 
