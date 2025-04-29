@@ -1,4 +1,5 @@
 use bevy::prelude::*;
+use bevy::pbr::AmbientLight;
 use bevy_egui::{egui, EguiContexts, EguiPlugin, EguiContextPass};
 use bevy::input::mouse::{MouseButton, MouseButtonInput};
 use bevy::input::gamepad::{GamepadButton, GamepadEvent};
@@ -105,6 +106,25 @@ fn dev_ui_panel_system(
     });
 }
 
+fn setup_level(
+    mut commands: Commands,
+    asset_server: Res<AssetServer>,
+) {
+    commands.spawn(Camera3d::default());
+    // Spawn the scene
+    commands.spawn(SceneRoot(asset_server.load(
+        GltfAssetLabel::Scene(0).from_asset("lowpoly_fps_game_map/scene.gltf#Scene0")
+    )));
+
+    commands.spawn((
+        AmbientLight {
+            color: Color::WHITE,
+            brightness: 0.5,
+            ..default()
+        },
+    ));
+}
+
 fn main() {
     App::new()
         .add_plugins(DefaultPlugins)
@@ -112,6 +132,7 @@ fn main() {
         .init_resource::<RecentInputEvents>()
         .init_resource::<RecentGameEvents>()
         .add_event::<GameEvent>()
+        .add_systems(Startup, setup_level)
         .add_systems(Update, controls_system)
         .add_systems(Update, game_event_collector_system)
         .add_systems(EguiContextPass, dev_ui_panel_system)
