@@ -6,9 +6,9 @@ mod events;
 mod controls;
 mod player;
 
-use events::{GameEvent, RecentInputEvents, RecentGameEvents};
+use events::{GameEvent, RecentInputEvents, RecentGameEvents, game_event_collector_system};
 use controls::controls_system;
-use player::game_event_collector_system;
+use player::{spawn_player, player_movement, player_look};
 
 fn dev_ui_panel_system(
     mut contexts: EguiContexts,
@@ -35,7 +35,6 @@ fn setup_level(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
 ) {
-    commands.spawn(Camera3d::default());
     // Spawn the scene
     commands.spawn(SceneRoot(asset_server.load(
         GltfAssetLabel::Scene(0).from_asset("lowpoly_fps_game_map/scene.gltf#Scene0")
@@ -57,9 +56,13 @@ fn main() {
         .init_resource::<RecentInputEvents>()
         .init_resource::<RecentGameEvents>()
         .add_event::<GameEvent>()
-        .add_systems(Startup, setup_level)
-        .add_systems(Update, controls_system)
-        .add_systems(Update, game_event_collector_system)
+        .add_systems(Startup, (setup_level, spawn_player))
+        .add_systems(Update, (
+            controls_system,
+            game_event_collector_system,
+            player_movement,
+            player_look,
+        ))
         .add_systems(EguiContextPass, dev_ui_panel_system)
         .run();
 } 
