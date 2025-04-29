@@ -51,7 +51,17 @@ fn setup_level(
 
 fn main() {
     App::new()
-        .add_plugins(DefaultPlugins)
+        .add_plugins(DefaultPlugins.set(WindowPlugin {
+            primary_window: Some(Window {
+                cursor_options: bevy::window::CursorOptions {
+                    visible: false,
+                    grab_mode: bevy::window::CursorGrabMode::Locked,
+                    ..default()
+                },
+                ..default()
+            }),
+            ..default()
+        }))
         .add_plugins(EguiPlugin { enable_multipass_for_primary_context: true })
         .init_resource::<RecentInputEvents>()
         .init_resource::<RecentGameEvents>()
