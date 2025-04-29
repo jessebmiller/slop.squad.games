@@ -1,89 +1,14 @@
 use bevy::prelude::*;
 use bevy::pbr::AmbientLight;
 use bevy_egui::{egui, EguiContexts, EguiPlugin, EguiContextPass};
-use bevy::input::mouse::{MouseButton, MouseButtonInput};
-use bevy::input::gamepad::{GamepadButton, GamepadEvent};
-use bevy::input::keyboard::{KeyboardInput, KeyCode};
-use bevy::input::ButtonState;
 
-#[derive(Event, Debug, Clone)]
-enum GameEvent {
-    Jump,
-    Fire,
-    // Add more game events as needed
-}
+mod events;
+mod controls;
+mod player;
 
-#[derive(Default, Resource)]
-struct RecentInputEvents {
-    events: Vec<String>,
-}
-
-#[derive(Default, Resource)]
-struct RecentGameEvents {
-    events: Vec<GameEvent>,
-}
-
-fn controls_system(
-    mut keyboard_events: EventReader<KeyboardInput>,
-    mut mouse_events: EventReader<MouseButtonInput>,
-    mut gamepad_events: EventReader<GamepadEvent>,
-    mut game_event_writer: EventWriter<GameEvent>,
-    mut recent_input: ResMut<RecentInputEvents>,
-) {
-    // Keyboard
-    for event in keyboard_events.read() {
-        let key = format!("Keyboard: {:?}", event);
-        recent_input.events.push(key);
-        if let (KeyCode::Space, ButtonState::Pressed) = (event.key_code, event.state) {
-            game_event_writer.write(GameEvent::Jump);
-        }
-    }
-    // Mouse
-    for event in mouse_events.read() {
-        let mouse = format!("Mouse: {:?}", event);
-        recent_input.events.push(mouse);
-        if let(MouseButton::Left, ButtonState::Pressed) = (event.button, event.state) {
-            game_event_writer.write(GameEvent::Fire);
-        }
-    }
-    // Gamepad
-    for event in gamepad_events.read() {
-        let pad = format!("Gamepad: {:?}", event);
-        recent_input.events.push(pad);
-        match event {
-            GamepadEvent::Button(event) => {
-                // Jump: A button
-                if event.button == GamepadButton::South && event.value > 0.5 {
-                    game_event_writer.write(GameEvent::Jump);
-                }
-                // Fire: Right Trigger
-                if event.button == GamepadButton::RightTrigger2 && event.value > 0.5 {
-                    game_event_writer.write(GameEvent::Fire);
-                }
-            }
-            _ => {}
-        }
-    }
-    // Keep only last 5 input events
-    let len = recent_input.events.len();
-    if len > 5 {
-        recent_input.events.drain(0..len - 5);
-    }
-}
-
-fn game_event_collector_system(
-    mut game_events: EventReader<GameEvent>,
-    mut recent_game: ResMut<RecentGameEvents>,
-) {
-    for event in game_events.read() {
-        recent_game.events.push(event.clone());
-    }
-    // Keep only last 5 game events
-    let len = recent_game.events.len();
-    if len > 5 {
-        recent_game.events.drain(0..len - 5);
-    }
-}
+use events::{GameEvent, RecentInputEvents, RecentGameEvents};
+use controls::controls_system;
+use player::game_event_collector_system;
 
 fn dev_ui_panel_system(
     mut contexts: EguiContexts,
