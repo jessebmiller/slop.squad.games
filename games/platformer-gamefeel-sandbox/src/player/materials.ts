@@ -1,14 +1,6 @@
 import { Material, DEFAULT_MATERIAL, AIR_MATERIAL } from '../materials';
 import { PlayerState } from './types';
 
-// Add global debug function
-declare global {
-  interface Window {
-    updateMaterialDebug: (material: string) => void;
-    updateMaterialValues: (values: { acceleration: number; deceleration: number; friction: number }) => void;
-  }
-}
-
 export const updateMaterialState = (
   state: PlayerState,
   scene: Phaser.Scene
