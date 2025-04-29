@@ -144,7 +144,7 @@ function create(this: Phaser.Scene) {
     // Original platforms
     this.add.rectangle(600, worldHeight - 350, 120, 20, DEFAULT_MATERIAL.color),
     this.add.rectangle(900, worldHeight - 500, 120, 20, DEFAULT_MATERIAL.color),
-    this.add.rectangle(1200, worldHeight - 300, 120, 20, ICE_MATERIAL.color),
+    this.add.rectangle(1200, worldHeight - 100, 320, 20, ICE_MATERIAL.color),
     this.add.rectangle(1500, worldHeight - 600, 120, 20, DEFAULT_MATERIAL.color),
     this.add.rectangle(1800, worldHeight - 400, 120, 20, DEFAULT_MATERIAL.color),
     this.add.rectangle(2100, worldHeight - 250, 120, 20, DEFAULT_MATERIAL.color),
@@ -155,7 +155,7 @@ function create(this: Phaser.Scene) {
   platforms.forEach((platform, index) => {
     this.physics.add.existing(platform, true);
     // Set the fourth platform to ice material, others to default
-    platform.setData('material', index === 3 ? ICE_MATERIAL : DEFAULT_MATERIAL);
+    platform.setData('material', index === 8 ? ICE_MATERIAL : DEFAULT_MATERIAL);
   });
 
   // Add all colliders

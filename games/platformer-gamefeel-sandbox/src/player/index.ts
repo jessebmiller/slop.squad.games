@@ -1,6 +1,11 @@
 import Phaser from 'phaser';
-import { AnimationState, createAnimations, getAnimationForState, ANIMATION_CONFIGS } from './player/animations';
-import { Material, DEFAULT_MATERIAL, AIR_MATERIAL } from './materials';
+import { AnimationState, createAnimations, getAnimationForState, ANIMATION_CONFIGS } from './animations';
+import { Material, DEFAULT_MATERIAL, AIR_MATERIAL } from '../materials';
+import { PlayerState, PlayerParameters, PlayerInput } from './types';
+import { updateMaterialState, applyFriction, getCurrentAcceleration, getCurrentDeceleration } from './materials';
+
+// Re-export types
+export type { PlayerState, PlayerParameters, PlayerInput };
 
 // Add global debug function
 declare global {
@@ -9,63 +14,6 @@ declare global {
     updateGravityDebug: (gravity: number) => void;
   }
 }
-
-export type PlayerState = {
-  sprite: Phaser.Physics.Arcade.Sprite;
-  coyoteTimer: number;
-  wasOnGround: boolean;
-  prevJumpPressed: boolean;
-  jumpBufferTimer: number;
-  currentAnimation: AnimationState;
-  currentMaterial: Material | null;
-  wallSliding: boolean;
-  wallJumpDirection: number;
-  wallJumpTimer: number;
-  doubleJumpAvailable: boolean;
-  dashAvailable: boolean;
-  dashTimer: number;
-  dashDirection: number;
-  groundPoundAvailable: boolean;
-  groundPoundTimer: number;
-};
-
-export type PlayerParameters = {
-  gravity: number;
-  jumpStrength: number;
-  moveSpeed: number;
-  coyoteTimeMs: number;
-  jumpBufferTimeMs: number;
-  jumpGravityMultiplier: number;
-  scale: number;
-  maxSpeed: number;
-  terminalVelocity: number;
-  acceleration: number;
-  deceleration: number;
-  airAcceleration: number;
-  airDeceleration: number;
-  wallSlideSpeed: number;
-  wallJumpStrength: number;
-  wallJumpTimeMs: number;
-  wallJumpPushStrength: number;
-  doubleJumpStrength: number;
-  dashSpeed: number;
-  dashDurationMs: number;
-  dashCooldownMs: number;
-  groundPoundSpeed: number;
-  groundPoundBounceStrength: number;
-  groundPoundCooldownMs: number;
-};
-
-export type PlayerInput = {
-  left: boolean;
-  right: boolean;
-  jump: boolean;
-  dash: boolean;
-  groundPound: boolean;
-  jumpBuffered: boolean;
-  dashBuffered: boolean;
-  groundPoundBuffered: boolean;
-};
 
 export const createPlayer = (
     scene: Phaser.Scene,
@@ -132,35 +80,7 @@ export const updatePlayer = (
      (state.sprite.body as Phaser.Physics.Arcade.Body).touching.right));
 
   // Update current material based on what we're touching
-  if (state.sprite.body) {
-    const body = state.sprite.body as Phaser.Physics.Arcade.Body;
-    if (body.touching.down) {
-      const platforms = scene.children.list.filter(
-        child => child.getData('material') && child !== state.sprite
-      ) as Phaser.GameObjects.GameObject[];
-      
-      for (const platform of platforms) {
-        const platformBody = platform.body as Phaser.Physics.Arcade.Body;
-        if (platformBody && body.touching.down) {
-          const playerBottom = body.bottom;
-          const platformTop = platformBody.top;
-          const distance = Math.abs(playerBottom - platformTop);
-          if (distance < 10) {
-            state.currentMaterial = platform.getData('material');
-            if (window.updateMaterialDebug && state.currentMaterial) {
-              window.updateMaterialDebug(state.currentMaterial.type);
-            }
-            break;
-          }
-        }
-      }
-    } else {
-      state.currentMaterial = null;
-      if (window.updateMaterialDebug) {
-        window.updateMaterialDebug('None');
-      }
-    }
-  }
+  updateMaterialState(state, scene);
 
   // Reset movement abilities when landing
   if (onGround && !state.wasOnGround) {
@@ -168,6 +88,7 @@ export const updatePlayer = (
     state.dashAvailable = true;
     state.groundPoundAvailable = true;
     state.wallSliding = false;
+    state.wallJumpTimer = 0;  // Reset wall jump timer when landing
   }
 
   // Coyote time logic
@@ -186,9 +107,18 @@ export const updatePlayer = (
     jumpBufferTimer -= delta;
   }
 
+  // Update wall jump timer
+  if (state.wallJumpTimer > 0) {
+    state.wallJumpTimer -= delta;
+    if (state.wallJumpTimer <= 0) {
+      state.wallJumpTimer = 0;  // Ensure it's exactly 0 when expired
+    }
+  }
+
   // Wall slide logic
-  if (onWall && !onGround && (input.left || input.right)) {
+  if (onWall && !onGround && (input.left || input.right) && (!state.wallJumpTimer || state.wallJumpTimer < parameters.wallJumpTimeMs - 100)) {
     state.wallSliding = true;
+    state.dashTimer = 0;
     if (state.sprite.body) {
       const body = state.sprite.body as Phaser.Physics.Arcade.Body;
       body.setVelocityY(parameters.wallSlideSpeed);
@@ -274,9 +204,7 @@ export const updatePlayer = (
     if (targetVelocityX !== 0) {
       // Moving: accelerate towards target
       const direction = Math.sign(targetVelocityX - currentVelocityX);
-      const currentAcceleration = onGround 
-        ? (state.currentMaterial?.acceleration ?? DEFAULT_MATERIAL.acceleration)
-        : AIR_MATERIAL.acceleration;
+      const currentAcceleration = getCurrentAcceleration(onGround, state.currentMaterial);
       const accelerationAmount = currentAcceleration * delta;
       newVelocityX += direction * accelerationAmount;
       if (Math.sign(newVelocityX) === Math.sign(targetVelocityX) && 
@@ -286,9 +214,7 @@ export const updatePlayer = (
     } else {
       // Stopping: decelerate
       const direction = -Math.sign(currentVelocityX);
-      const currentDeceleration = onGround
-        ? (state.currentMaterial?.deceleration ?? DEFAULT_MATERIAL.deceleration)
-        : AIR_MATERIAL.deceleration;
+      const currentDeceleration = getCurrentDeceleration(onGround, state.currentMaterial);
       const decelerationAmount = currentDeceleration * delta;
       newVelocityX += direction * decelerationAmount;
       if (Math.sign(newVelocityX) !== Math.sign(currentVelocityX) || 
@@ -299,11 +225,7 @@ export const updatePlayer = (
     
     // Apply friction only when there's no input
     if (targetVelocityX === 0) {
-      if (onGround && state.currentMaterial) {
-        newVelocityX *= state.currentMaterial.friction;
-      } else if (!onGround) {
-        newVelocityX *= AIR_MATERIAL.friction;
-      }
+      newVelocityX = applyFriction(newVelocityX, onGround, state.currentMaterial);
     }
     
     body.setVelocityX(newVelocityX);
@@ -331,7 +253,9 @@ export const updatePlayer = (
     
     // If rising and holding jump, apply reduced gravity
     if (rising && input.jump) {
-      scene.physics.world.gravity.y = parameters.gravity * parameters.jumpGravityMultiplier;
+      // Scale gravity by delta time to make it frame-rate independent
+      const gravityScale = parameters.jumpGravityMultiplier * (delta / 16.67); // 16.67ms is ~60fps
+      scene.physics.world.gravity.y = parameters.gravity * gravityScale;
     }
 
     // Update gravity debug info
