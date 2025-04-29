@@ -55,7 +55,7 @@ fn main() {
             primary_window: Some(Window {
                 cursor_options: bevy::window::CursorOptions {
                     visible: false,
-                    grab_mode: bevy::window::CursorGrabMode::Locked,
+                    grab_mode: bevy::window::CursorGrabMode::Confined,
                     ..default()
                 },
                 ..default()
