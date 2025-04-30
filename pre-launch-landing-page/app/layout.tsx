@@ -32,8 +32,8 @@ const rubikMicrobe = Rubik_Microbe({
 })
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
+  title: 'Slop Squad',
+  description: 'slop slop slop',
   generator: 'v0.dev',
 }
 
