@@ -47,19 +47,13 @@ export default function Home() {
     <div className={`${rock3D.variable} ${specialElite.variable} ${rubikSprayPaint.variable} ${rubikGlitch.variable} ${rubikMicrobe.variable} ${paletteMosaic.variable}`}>
       <main className="min-h-screen bg-black text-white relative">
         {/* Noise overlay */}
-        <div className="fixed inset-0 bg-[url('/noise.png')] opacity-10 pointer-events-none z-10"></div>
+        <div className="fixed inset-0 bg-noise z-10"></div>
 
         {/* Hero Section */}
         <section className="relative overflow-hidden">
           {/* Bold glitch texture background */}
           <div className="absolute inset-0 bg-black"></div>
-          <div
-            className="absolute inset-0 bg-cover bg-center opacity-90 z-0"
-            style={{
-              backgroundImage: "url('/glitch-texture.png')",
-              backgroundRepeat: "repeat",
-            }}
-          ></div>
+          <div className="absolute inset-0 bg-glitch-texture opacity-90 z-0"></div>
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#ff00ff80_0%,transparent_50%)] opacity-30 mix-blend-color-dodge"></div>
           <div className="container mx-auto px-4 pt-20 pb-16 relative z-20">
             <div className="max-w-4xl mx-auto text-center">
@@ -73,7 +67,7 @@ export default function Home() {
                 <GlitchText>SLOP SQUAD GAMES</GlitchText>
               </h1>
 
-              <p className="text-xl md:text-2xl mb-8 font-special-elite max-w-2xl mx-auto leading-relaxed bg-black">
+              <p className="text-xl md:text-2xl mb-8 font-special-elite max-w-2xl mx-auto leading-relaxed">
                 A collaboration platform for indie devs making weird, wild, and wonderful games. Host, mod, and sell your
                 digital experiments.
               </p>
@@ -153,7 +147,7 @@ export default function Home() {
 
         {/* Join Section */}
         <section id="join" className="py-16 relative">
-          <div className="absolute inset-0 bg-[url('/glitch-texture.png')] opacity-10 mix-blend-overlay"></div>
+          <div className="absolute inset-0 bg-glitch-texture opacity-10 mix-blend-overlay"></div>
           <div className="container mx-auto px-4 relative z-20">
             <div className="max-w-2xl mx-auto bg-black border-2 border-white p-8 relative">
               <div className="absolute -top-4 -left-4 bg-[#ff00ff] text-black px-4 py-2 font-special-elite text-xl tracking-wider">
