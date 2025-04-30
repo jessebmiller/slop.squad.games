@@ -189,7 +189,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="hover:text-[#00ffff] transition-colors"
                 >
-                  <Image src="/Discord-Symbol-White.svg" alt="Discord" width={24} height={24} />
+                  <Image src="/Discord-Symbol-White.svg" alt="Discord" width={24} height={24} className="h-6 w-auto" />
                 </Link>
                 <Link 
                   href="https://bsky.app/profile/squad-games.bsky.social" 
@@ -197,7 +197,7 @@ export default function Home() {
                   rel="noopener noreferrer"
                   className="hover:text-[#00ffff] transition-colors"
                 >
-                  <Image src="/Bluesky_Logo.svg" alt="Bluesky" width={24} height={24} />
+                  <Image src="/Bluesky_Logo.svg" alt="Bluesky" width={24} height={24} className="h-6 w-auto" />
                 </Link>
               </div>
             </div>
