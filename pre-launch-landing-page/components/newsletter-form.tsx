@@ -1,28 +1,32 @@
 "use client"
 
 import type React from "react"
-
 import { useState } from "react"
 import { subscribeToNewsletter } from "@/app/actions"
-import { Loader2 } from "lucide-react"
+import { UpdateIcon } from "@radix-ui/react-icons"
+import { cn } from "@/lib/utils"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 export default function NewsletterForm() {
   const [email, setEmail] = useState("")
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle")
-  const [message, setMessage] = useState("")
+  const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
+  const [error, setError] = useState("")
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    setStatus("loading")
+    setLoading(true)
+    setError("")
 
     try {
       await subscribeToNewsletter(email)
-      setStatus("success")
-      setMessage("You're in! Welcome to the Slop Squad.")
+      setSuccess(true)
       setEmail("")
-    } catch (error) {
-      setStatus("error")
-      setMessage("Something went wrong. Please try again.")
+    } catch (err) {
+      setError("Something went wrong. Please try again.")
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -30,35 +34,51 @@ export default function NewsletterForm() {
     <div>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-3">
-          <input
+          <Input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
             required
-            className="bg-black border-2 border-white px-4 py-3 flex-grow placeholder-gray-500 focus:outline-none focus:border-[#00ff66]"
+            className={cn(
+              "bg-black border-2 border-white placeholder-gray-500 focus:border-[#00ff66]",
+              "flex-grow",
+              loading || success && "bg-[#00ff6620] text-[#00ff66]",
+              error && "border-red-500"
+            )}
+            disabled={loading || success}
           />
-          <button
+          <Button
             type="submit"
-            disabled={status === "loading"}
-            className="bg-[#00ff66] hover:bg-[#00ff88] text-black px-6 py-3 font-bold transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            disabled={loading || success}
+            className={cn(
+              "bg-[#00ff66] hover:bg-[#00ff88] text-black font-bold",
+              "transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
+              "flex items-center justify-center"
+            )}
           >
-            {status === "loading" ? <Loader2 className="animate-spin" size={20} /> : "JOIN NOW"}
-          </button>
+            {loading ? (
+              <div className="flex items-center gap-2">
+                <UpdateIcon className="w-4 h-4 animate-spin" />
+                <span>Joining...</span>
+              </div>
+            ) : success ? (
+              "You're in! Welcome to the Slop Squad."
+            ) : (
+              "JOIN NOW"
+            )}
+          </Button>
         </div>
       </form>
 
-      {status !== "idle" && (
+      {error && (
         <div
-          className={`mt-4 p-3 ${
-            status === "success"
-              ? "bg-[#00ff6620] text-[#00ff66]"
-              : status === "error"
-                ? "bg-[#ff2d5520] text-[#ff2d55]"
-                : ""
-          }`}
+          className={cn(
+            "mt-4 p-3 rounded-md",
+            "bg-[#ff2d5520] text-[#ff2d55]"
+          )}
         >
-          {message}
+          {error}
         </div>
       )}
     </div>
