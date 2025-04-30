@@ -161,8 +161,9 @@
 /* Background image styles */
 .bg-glitch-texture {
   background-image: url('/glitch-texture.png');
-  background-repeat: repeat;
-  background-size: 200px 200px;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
 }
 
 .bg-noise {
