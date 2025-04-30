@@ -35,6 +35,24 @@ export const metadata: Metadata = {
   title: 'Slop Squad',
   description: 'slop slop slop',
   generator: 'v0.dev',
+  openGraph: {
+    title: 'Slop Squad',
+    description: 'slop slop slop',
+    images: [
+      {
+        url: '/images/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Slop Squad Games',
+      },
+    ],
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Slop Squad',
+    description: 'slop slop slop',
+    images: ['/images/og-image.png'],
+  },
 }
 
 export default function RootLayout({
