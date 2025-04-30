@@ -63,12 +63,12 @@ export default function Home() {
                 </div>
               </div>
 
-              <h1 className="text-6xl md:text-8xl font-rock-3d mb-6 leading-none">
+              <h1 className="text-6xl md:text-8xl font-rubik-spray-paint mb-6 leading-none">
                 <GlitchText>SLOP SQUAD GAMES</GlitchText>
               </h1>
 
               <p className="text-xl md:text-2xl mb-8 font-special-elite max-w-2xl mx-auto leading-relaxed">
-                <span className="bg-black px-1">A collaboration platform for indie devs making weird, wild, and wonderful games. Host, mod, and sell your digital experiments.</span>
+                <span className="bg-black px-3 py-1">A collaboration platform for indie devs making weird, wild, and wonderful games. Host, mod, and sell your digital experiments.</span>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
