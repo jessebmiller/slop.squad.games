@@ -182,13 +182,28 @@ export default function Home() {
                 <p className="font-special-elite">© {new Date().getFullYear()} Slop Squad Games</p>
               </div>
               <div className="flex space-x-4">
-                <Link href="#" className="hover:text-[#00ffff] transition-colors">
+                <Link 
+                  href="https://github.com/jessebmiller/slop.squad.games" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-[#00ffff] transition-colors"
+                >
                   <Image src="/github-mark/github-mark-white.svg" alt="GitHub" width={24} height={24} />
                 </Link>
-                <Link href="https://discord.gg/BRf6T7RmVd" className="hover:text-[#00ffff] transition-colors">
+                <Link 
+                  href="https://discord.gg/BRf6T7RmVd" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-[#00ffff] transition-colors"
+                >
                   <Image src="/Discord-Symbol-White.svg" alt="Discord" width={24} height={24} />
                 </Link>
-                <Link href="https://bsky.app/profile/squad-games.bsky.social" className="hover:text-[#00ffff] transition-colors">
+                <Link 
+                  href="https://bsky.app/profile/squad-games.bsky.social" 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="hover:text-[#00ffff] transition-colors"
+                >
                   <Image src="/Bluesky_Logo.svg" alt="Bluesky" width={24} height={24} />
                 </Link>
               </div>
