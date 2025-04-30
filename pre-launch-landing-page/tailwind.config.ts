@@ -75,8 +75,14 @@ const config: Config = {
         sm: "calc(var(--radius) - 4px)",
       },
       fontFamily: {
-        "tilt-neon": ["var(--font-tilt-neon)"],
+        sans: ["var(--font-geist-sans)"],
+        mono: ["var(--font-geist-mono)"],
+        "rock-3d": ["var(--font-rock-3d)"],
         "special-elite": ["var(--font-special-elite)"],
+        "rubik-spray-paint": ["var(--font-rubik-spray-paint)"],
+        "rubik-glitch": ["var(--font-rubik-glitch)"],
+        "rubik-microbe": ["var(--font-rubik-microbe)"],
+        "palette-mosaic": ["var(--font-palette-mosaic)"],
       },
       animation: {
         glitch: "glitch 0.3s ease-in-out infinite",

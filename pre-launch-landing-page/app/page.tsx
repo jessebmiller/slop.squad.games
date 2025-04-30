@@ -1,14 +1,15 @@
-import { Tilt_Neon, Special_Elite } from "next/font/google"
+import { Rock_3D, Special_Elite, Rubik_Spray_Paint, Rubik_Glitch, Rubik_Microbe, Palette_Mosaic } from "next/font/google"
 import NewsletterForm from "@/components/newsletter-form"
 import FeatureCard from "@/components/feature-card"
 import GlitchText from "@/components/glitch-text"
-import { ArrowDown, Github, Zap } from "lucide-react"
+import { ArrowDown, Zap } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
-const tiltNeon = Tilt_Neon({
+const rock3D = Rock_3D({
   weight: "400",
   subsets: ["latin"],
-  variable: "--font-tilt-neon",
+  variable: "--font-rock-3d",
 })
 
 const specialElite = Special_Elite({
@@ -17,9 +18,33 @@ const specialElite = Special_Elite({
   variable: "--font-special-elite",
 })
 
+const rubikSprayPaint = Rubik_Spray_Paint({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-rubik-spray-paint",
+})
+
+const rubikGlitch = Rubik_Glitch({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-rubik-glitch",
+})
+
+const rubikMicrobe = Rubik_Microbe({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-rubik-microbe",
+})
+
+const paletteMosaic = Palette_Mosaic({
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-palette-mosaic",
+})
+
 export default function Home() {
   return (
-    <div className={`${tiltNeon.variable} ${specialElite.variable}`}>
+    <div className={`${rock3D.variable} ${specialElite.variable} ${rubikSprayPaint.variable} ${rubikGlitch.variable} ${rubikMicrobe.variable} ${paletteMosaic.variable}`}>
       <main className="min-h-screen bg-black text-white relative">
         {/* Noise overlay */}
         <div className="fixed inset-0 bg-[url('/noise.png')] opacity-10 pointer-events-none z-10"></div>
@@ -35,35 +60,34 @@ export default function Home() {
               backgroundRepeat: "repeat",
             }}
           ></div>
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#ff2d5580_0%,transparent_50%)] opacity-30 mix-blend-color-dodge"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#ff00ff80_0%,transparent_50%)] opacity-30 mix-blend-color-dodge"></div>
           <div className="container mx-auto px-4 pt-20 pb-16 relative z-20">
             <div className="max-w-4xl mx-auto text-center">
               <div className="inline-block rotate-[-2deg] mb-6">
-                <div className="bg-[#ff2d55] text-black px-4 py-2 font-special-elite text-xl tracking-wider">
-                  RECLAIMING THE SLOP
+                <div className="bg-[#ff00ff] text-black px-4 py-2 font-special-elite text-xl tracking-wider">
+                  JUMPING IN THE SLOP
                 </div>
               </div>
 
-              <h1 className="text-6xl md:text-8xl font-tilt-neon mb-6 leading-none">
-                <GlitchText>SLOP SQUAD</GlitchText>
-                <span className="block text-[#00ff66] mt-2">GAMES</span>
+              <h1 className="text-6xl md:text-8xl font-rock-3d mb-6 leading-none">
+                <GlitchText>SLOP SQUAD GAMES</GlitchText>
               </h1>
 
-              <p className="text-xl md:text-2xl mb-8 font-special-elite max-w-2xl mx-auto leading-relaxed">
-                A punk collective for indie devs making weird, wild, and wonderful games. Host, collaborate, and sell your
+              <p className="text-xl md:text-2xl mb-8 font-special-elite max-w-2xl mx-auto leading-relaxed bg-black">
+                A collaboration platform for indie devs making weird, wild, and wonderful games. Host, mod, and sell your
                 digital experiments.
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
                 <Link
                   href="#join"
-                  className="bg-[#ff2d55] hover:bg-[#ff4d75] text-black px-8 py-3 text-lg font-bold transition-all duration-300 transform hover:translate-y-[-2px] hover:rotate-[-1deg] rounded-md"
+                  className="bg-[#ff00ff] hover:bg-[#ff33ff] text-black px-8 py-3 text-lg font-special-elite transition-all duration-300 transform hover:translate-y-[-2px] hover:rotate-[-1deg] rounded-md"
                 >
                   JOIN THE SQUAD
                 </Link>
                 <Link
                   href="#about"
-                  className="border-2 border-white hover:border-[#00ff66] hover:text-[#00ff66] px-8 py-3 text-lg font-bold transition-all duration-300 transform hover:translate-y-[-2px] hover:rotate-[1deg] rounded-md"
+                  className="bg-black border-2 border-white hover:border-[#00ffff] hover:text-[#00ffff] px-8 py-3 text-lg font-special-elite transition-all duration-300 transform hover:translate-y-[-2px] hover:rotate-[1deg]"
                 >
                   LEARN MORE
                 </Link>
@@ -78,48 +102,48 @@ export default function Home() {
 
         {/* About Section */}
         <section id="about" className="py-16 relative">
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#00ff6640_0%,transparent_50%)] opacity-30"></div>
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,#00ffff40_0%,transparent_50%)] opacity-30"></div>
           <div className="container mx-auto px-4 relative z-20">
             <div className="max-w-4xl mx-auto text-center">
-              <h2 className="text-4xl md:text-5xl font-tilt-neon mb-8 text-[#00ff66]">
+              <h2 className="text-4xl md:text-5xl font-rock-3d mb-8 text-[#00ffff]">
                 WHAT IS <span className="text-white">SLOP SQUAD?</span>
               </h2>
 
               <div className="space-y-6 font-special-elite text-lg max-w-3xl mx-auto">
                 <p>
-                  Remember the wild west days of Flash games? When anyone could make anything, and some of it was
-                  terrible, but all of it was <span className="text-[#00ff66]">interesting</span>?
+                  Remember the wild west days of Flash games? When anyone could make anything, and most of it was
+                  terrible, but all of it was <span className="text-[#00ffff]">interesting</span>?
                 </p>
 
                 <p>
-                  Slop Squad Games is reclaiming the term "slop game" as a{" "}
-                  <span className="text-[#ff2d55]">punk indie dev identity</span>. We're building a platform where
-                  experimental, weird, unpolished games can thrive.
+                  Slop Squad Games is a place for {" "}
+                  <span className="text-[#ff00ff]">rebelious indie devs</span> to make and share experimental,
+                  weird, unpolished games, and thrive doing it. Let's make a ton of slop!
                 </p>
 
                 <p>
-                  Host your games for free. Collaborate with other devs. Mod each other's creations. Share revenue through
+                  Host your slop for free. Collaborate with other devs. Mod each other's creations. Share revenue through
                   our radical licensing system. Build the future of indie games together.
                 </p>
               </div>
 
               <div className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
                 <FeatureCard
-                  icon={<Zap size={32} />}
+                  icon={<span className="text-3xl">💻</span>}
                   title="FREE HOSTING"
                   description="Host your games for free if they're on GitHub. No gatekeepers, no barriers."
-                  color="#ff2d55"
+                  color="#ff00ff"
                 />
                 <FeatureCard
-                  icon={<Github size={32} />}
-                  title="SOCIAL CODING"
-                  description="Collaborate, fork, and mod each other's games. Build on each other's ideas."
-                  color="#00ff66"
+                  icon={<span className="text-3xl">🎉</span>}
+                  title="SOCIAL VIBING"
+                  description="Remix, fork, and mod each other's games. Build weird games from weird games."
+                  color="#00ffff"
                 />
                 <FeatureCard
-                  icon={<div className="text-3xl">💰</div>}
+                  icon={<span className="text-3xl">💸</span>}
                   title="REVENUE SHARING"
-                  description="Radical licensing for ad hoc collections of games, mods, and content."
+                  description="Radical licensing for ad hoc collaboration between designers, modders, and artists."
                   color="#ffcc00"
                 />
               </div>
@@ -132,12 +156,12 @@ export default function Home() {
           <div className="absolute inset-0 bg-[url('/glitch-texture.png')] opacity-10 mix-blend-overlay"></div>
           <div className="container mx-auto px-4 relative z-20">
             <div className="max-w-2xl mx-auto bg-black border-2 border-white p-8 relative">
-              <div className="absolute -top-4 -left-4 bg-[#ff2d55] text-black px-4 py-2 font-special-elite text-xl tracking-wider">
+              <div className="absolute -top-4 -left-4 bg-[#ff00ff] text-black px-4 py-2 font-special-elite text-xl tracking-wider">
                 JOIN THE SQUAD
               </div>
 
-              <h2 className="text-3xl md:text-4xl font-tilt-neon mb-6 mt-4 text-center">
-                BE PART OF THE <span className="text-[#00ff66]">REVOLUTION</span>
+              <h2 className="text-3xl md:text-4xl font-palette-mosaic mb-6 mt-4 text-center">
+                BE PART OF THE <span className="text-[#00ffff]">REVOLUTION</span>
               </h2>
 
               <p className="font-special-elite mb-8 text-center">
@@ -158,14 +182,14 @@ export default function Home() {
                 <p className="font-special-elite">© {new Date().getFullYear()} Slop Squad Games</p>
               </div>
               <div className="flex space-x-4">
-                <Link href="#" className="hover:text-[#00ff66] transition-colors">
-                  <Github size={24} />
+                <Link href="#" className="hover:text-[#00ffff] transition-colors">
+                  <Image src="/github-mark/github-mark-white.svg" alt="GitHub" width={24} height={24} />
                 </Link>
-                <Link href="#" className="hover:text-[#00ff66] transition-colors">
-                  Twitter
+                <Link href="https://discord.gg/BRf6T7RmVd" className="hover:text-[#00ffff] transition-colors">
+                  <Image src="/Discord-Symbol-White.svg" alt="Discord" width={24} height={24} />
                 </Link>
-                <Link href="#" className="hover:text-[#00ff66] transition-colors">
-                  Discord
+                <Link href="https://bsky.app/profile/squad-games.bsky.social" className="hover:text-[#00ffff] transition-colors">
+                  <Image src="/Bluesky_Logo.svg" alt="Bluesky" width={24} height={24} />
                 </Link>
               </div>
             </div>

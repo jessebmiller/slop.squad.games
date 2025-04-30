@@ -20,7 +20,7 @@ export default function FeatureCard({ icon, title, description, color }: Feature
           {icon}
         </div>
 
-        <h3 className="text-xl font-tilt-neon mb-3" style={{ color }}>
+        <h3 className={`text-xl font-special-elite mb-2`} style={{ color }}>
           {title}
         </h3>
 

@@ -41,9 +41,9 @@ export default function NewsletterForm() {
             placeholder="your@email.com"
             required
             className={cn(
-              "bg-black border-2 border-white placeholder-gray-500 focus:border-[#00ff66]",
-              "flex-grow",
-              loading || success && "bg-[#00ff6620] text-[#00ff66]",
+              "bg-black border-2 border-white placeholder-gray-500 focus:border-[#00ffff]",
+              "flex-grow font-special-elite",
+              loading || success && "bg-[#00ffff20] text-[#00ffff]",
               error && "border-red-500"
             )}
             disabled={loading || success}
@@ -52,7 +52,7 @@ export default function NewsletterForm() {
             type="submit"
             disabled={loading || success}
             className={cn(
-              "bg-[#00ff66] hover:bg-[#00ff88] text-black font-bold",
+              "bg-[#00ffff] hover:bg-[#00ffff] text-black font-special-elite",
               "transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed",
               "flex items-center justify-center"
             )}
@@ -75,7 +75,7 @@ export default function NewsletterForm() {
         <div
           className={cn(
             "mt-4 p-3 rounded-md",
-            "bg-[#ff2d5520] text-[#ff2d55]"
+            "bg-[#ff00ff20] text-[#ff00ff]"
           )}
         >
           {error}
