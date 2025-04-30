@@ -35,15 +35,18 @@ export const metadata: Metadata = {
   title: 'Slop Squad',
   description: 'slop slop slop',
   generator: 'v0.dev',
+  metadataBase: new URL('https://slop.squad.games'),
   openGraph: {
+    url: 'https://slop.squad.games',
+    type: 'website',
     title: 'Slop Squad',
     description: 'slop slop slop',
     images: [
       {
-        url: '/images/og-image.png',
+        url: 'https://opengraph.b-cdn.net/production/images/ba5cfb85-ee60-49f8-ac4d-f8674a506c07.png?token=7vt85a5NR01GGv_n8Zbz9963z_xfIiwOi9KYxirfkGE&height=630&width=1200&expires=33282048223',
         width: 1200,
         height: 630,
-        alt: 'Slop Squad Games',
+        alt: 'Slop Squad',
       },
     ],
   },
@@ -51,7 +54,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'Slop Squad',
     description: 'slop slop slop',
-    images: ['/images/og-image.png'],
+    images: ['https://opengraph.b-cdn.net/production/images/ba5cfb85-ee60-49f8-ac4d-f8674a506c07.png?token=7vt85a5NR01GGv_n8Zbz9963z_xfIiwOi9KYxirfkGE&height=630&width=1200&expires=33282048223'],
   },
 }
 
