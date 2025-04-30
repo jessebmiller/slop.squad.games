@@ -68,8 +68,7 @@ export default function Home() {
               </h1>
 
               <p className="text-xl md:text-2xl mb-8 font-special-elite max-w-2xl mx-auto leading-relaxed">
-                A collaboration platform for indie devs making weird, wild, and wonderful games. Host, mod, and sell your
-                digital experiments.
+                <span className="bg-black px-1">A collaboration platform for indie devs making weird, wild, and wonderful games. Host, mod, and sell your digital experiments.</span>
               </p>
 
               <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
